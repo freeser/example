@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>js打开app</title>
-<meta name=viewport content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
-<meta name="apple-itunes-app" content="app-id=1188949435">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>js打开app</title>
+    <meta name=viewport content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+    <meta name="apple-itunes-app" content="app-id=477927812"> <!--477927812//1188949435 -->
 </head>
+
 <body>
-    点击打开<a href="javascript:;" id="openApp">佰医汇客户端</a>
+    点击打开
+    <a href="javascript:;" id="openApp">佰医汇客户端</a>
 </body>
-</html>
 <script type="text/javascript">
-    document.getElementById('openApp').onclick = function(e){
-        window.location.href = "com.kangxin.doctor://";//ios app协议
-		window.setTimeout(function() {
-			window.location.href = "http://a.app.qq.com/o/simple.jsp?pkgname=com.kangxin.doctor";
-		}, 2000)
-			/*
+    document.getElementById('openApp').onclick = function (e) {
+        if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) {
+            window.location.href = "com.baidu.tieba://"; //ios app协议
+            window.setTimeout(function () {
+                window.location.href = "https://itunes.apple.com/cn/app/id477927812";
+            }, 2000)
+        }
+        if (navigator.userAgent.match(/android/i)) {
+            window.location.href = "com.baidu.tieba://app"; //android app协议
+            window.setTimeout(function () {
+                window.location.href = "https://****.apk"; //android 下载地址
+            }, 2000)
+        }
+        // window.location.href = "com.kangxin.doctor://"; //ios app协议
+        // window.setTimeout(function () {
+        //     window.location.href = "http://a.app.qq.com/o/simple.jsp?pkgname=com.kangxin.doctor";
+        // }, 2000)
+        /*
         if(navigator.userAgent.match(/(iPhone|iPod|iPad);?/i))
            {
             window.location.href = "com.kangxin.doctor://";//ios app协议
@@ -33,3 +47,5 @@
         }*/
     };
 </script>
+
+</html>
