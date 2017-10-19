@@ -1,0 +1,225 @@
+{
+  "configs": [
+    {
+      "server": "us01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国1",
+      "timeout": 5
+    },
+    {
+      "server": "us02.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国2",
+      "timeout": 5
+    },
+    {
+      "server": "us03.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国3",
+      "timeout": 5
+    },
+    {
+      "server": "us04.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国4",
+      "timeout": 5
+    },
+    {
+      "server": "us05.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国5",
+      "timeout": 5
+    },
+    {
+      "server": "us06.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国6",
+      "timeout": 5
+    },
+    {
+      "server": "us07.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国7",
+      "timeout": 5
+    },
+    {
+      "server": "us08.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国8",
+      "timeout": 5
+    },
+    {
+      "server": "us09.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国9",
+      "timeout": 5
+    },
+    {
+      "server": "us10.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "美国10",
+      "timeout": 5
+    },
+    {
+      "server": "sg01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "新加坡1",
+      "timeout": 5
+    },
+    {
+      "server": "hg01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "韩国1",
+      "timeout": 5
+    },
+    {
+      "server": "xg01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "香港1",
+      "timeout": 5
+    },
+    {
+      "server": "xg02.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "香港2",
+      "timeout": 5
+    },
+    {
+      "server": "tw01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "台湾1",
+      "timeout": 5
+    },
+    {
+      "server": "tw02.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "台湾2",
+      "timeout": 5
+    },
+    {
+      "server": "uk01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "英国",
+      "timeout": 5
+    },
+    {
+      "server": "de01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "德国",
+      "timeout": 5
+    },
+    {
+      "server": "cn01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "中国",
+      "timeout": 5
+    },
+    {
+      "server": "jp01.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "日本1",
+      "timeout": 5
+    },
+    {
+      "server": "jp02.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "日本2",
+      "timeout": 5
+    },
+    {
+      "server": "jp03.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "日本3",
+      "timeout": 5
+    },
+    {
+      "server": "jp04.jiasudu.biz",
+      "server_port": 12049,
+      "password": "18701609408",
+      "method": "aes-256-cfb",
+      "remarks": "日本4",
+      "timeout": 5
+    }
+  ],
+  "strategy": null,
+  "index": 10,
+  "global": false,
+  "enabled": true,
+  "shareOverLan": false,
+  "isDefault": false,
+  "localPort": 1080,
+  "pacUrl": null,
+  "useOnlinePac": false,
+  "secureLocalPac": true,
+  "availabilityStatistics": true,
+  "autoCheckUpdate": false,
+  "checkPreRelease": false,
+  "isVerboseLogging": false,
+  "logViewer": {
+    "topMost": false,
+    "wrapText": false,
+    "toolbarShown": false,
+    "Font": "Consolas, 8pt",
+    "BackgroundColor": "Black",
+    "TextColor": "White"
+  },
+  "proxy": {
+    "useProxy": false,
+    "proxyType": 0,
+    "proxyServer": "",
+    "proxyPort": 0,
+    "proxyTimeout": 3
+  },
+  "hotkey": {
+    "SwitchSystemProxy": "",
+    "SwitchSystemProxyMode": "",
+    "SwitchAllowLan": "",
+    "ShowLogs": "",
+    "ServerMoveUp": "",
+    "ServerMoveDown": ""
+  }
+}
