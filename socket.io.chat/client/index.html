@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+  <title>遥控示例</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body onload="init()">
+  <div id="app" class="tcenter">
+    <dl class="tcenter">
+      <dd id="status">未连接</dd>
+      <dd class="tright"><button onclick="msgToSer('on/off')">开关</button></dd>
+      <dd class="tright"><button onclick="msgToSer('sleep')">睡眠</button></dd>
+      <dd>当前温度：<label>15</label></dd>
+      <dd>当前湿度：<label>25</label></dd>
+      <dd>空气质量：<label>30</label></dd>
+      <dd style="height: 2em;"></dd>
+      <dd><button onclick="msgToSer('auto')">手动</button><button onclick="msgToSer('custom')">自动</button></dd>
+      <dd><button onclick="msgToSer('hot')">辅热开头</button></dd>
+      <dd class="dditem flex acenter">
+        <label>设备风量：</label>
+        <span class="flex_1"><input type="range" name="fengliang" oninput="rangechange('fengliang', this.value)" id="fengliang" max="4" min="1" step="1"></span>
+      </dd>
+      <dd class="dditem flex acenter">
+        <label>运行间隔：</label>
+        <span class="flex_1"><input type="range" name="jiange" oninput="rangechange('jiange', this.value)" id="jiange" max="4" min="1" step="1"></span>
+      </dd>
+      <dd class="dditem flex acenter">
+        <label>定时开：</label>
+        <span class="flex_1"><input type="datetime-local" oninput="datechange('begint', this.value)" name="begint" id="begint"></span>
+      </dd>
+      <dd class="dditem flex acenter">
+        <label>定时关：</label>
+        <span class="flex_1"><input type="datetime-local" oninput="datechange('endt', this.value)" name="endt" id="endt"></span>
+      </dd>
+    </dl>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script>
+      var deviceId = getParam('deviceId');
+      var socket = io();
+      function init() {
+        deviceId && socket.emit('ready', deviceId);
+      }
+      function msgToSer (cfg) {
+        socket.emit('order', deviceId, cfg)
+      }
+      function rangechange (name, value) {
+        msgToSer(name + '_' + value);
+      }
+      function datechange (name, value) {
+        msgToSer(name + '_' + value);
+      }
+
+      //回传消息  //方法2
+      deviceId && socket.on('device_' + deviceId, function (data) {
+        log(data);
+      });
+
+      //连接成功
+      socket.on('login', function (deviceId) {
+        log('连接成功：' + deviceId);
+      });
+
+      //回传消息 //方法1
+      //socket.on('clientMsg', function (data) {
+      //  log('设备消息：' + data);
+      //});
+
+      //设备断开
+      socket.on('device left', function (deviceId) {
+        log('设备离线：' + deviceId);
+      });
+
+      //断开连接
+      socket.on('disconnect', function () {
+        log('连接断开：' + deviceId);
+      });
+
+      //重新连接
+      socket.on('reconnect', function () {
+        log('重新连接：' + deviceId);
+        if (deviceId) {
+            socket.emit('room', deviceId);
+        }
+      });
+
+      //连接失败
+      socket.on('reconnect_error', function () {
+        log('连接失败');
+      });
+
+      function log (message) {
+          document.getElementById('status').innerHTML = message;
+      }
+
+      function getParam(name, href) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(href || window.location.href);
+        if (results == null)
+          return "";
+        else
+          return results[1];
+      }
+  </script>
+</body>
+</html>
