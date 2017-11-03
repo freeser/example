@@ -38,13 +38,13 @@
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script>
-      var socket = io();
-      var groupId = getParam('group');
+      // var socket = io();
+      var socket = io.connect('http://localhost:3000/room1')
       var userName = getParam('user');
       socket.on('connect', () => {
           log('连接成功：' + socket.id);
           // 加入群组
-          groupId && socket.emit('group', groupId, userName);
+          userName && socket.emit('join', userName);
       });
 
       //接收消息

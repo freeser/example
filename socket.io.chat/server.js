@@ -14,26 +14,35 @@ server.listen(port, function () {
 app.use(express.static(path.join(__dirname, 'client')));
 
 io.on('connection', function (socket) {
-  var addedUser = false;
-
-  // when the client emits 'new message', this listens and executes
-  socket.on('order', function (did, cfg) {
-    var msg = '回执：' + JSON.stringify(cfg);
-    // we tell the client to execute 'new message'
-    // sockets.broadcast.to(did).emit('clientMsg', msg); //方法1.1
-    // io.sockets.in(did).emit('clientMsg', msg); //方法1.2
-    socket.emit('device_' + did, msg); //方法2
+  var socketId = socket.id;
+  socket.on('order', function (message) {
+    var msg = socket.userName + ': ' + '回执：' + JSON.stringify(message);
+    // io.sockets.sockets[socketId].emit('clientMsg', msg); 给指定的socketId发送消息，适用于在其它connect里面
+    if (socket.groupId) {
+        socket.to(socket.groupId).broadcast.emit('group.emit', msg);
+        //io.sockets.in(socket.groupId).emit('group.emit', msg); //方法1.2
+    } else {
+        socket.emit('clientMsg', msg);
+    }
   });
-
-  // when the client emits 'add user', this listens and executes
-  socket.on('ready', function (deviceId) {
-    // socket.join(deviceId);  //方法1
-    //方法1、2
-    socket.emit('login', deviceId);
+  // 加入群组
+  socket.on('group', function (groupId, userName) {
+    socket.groupId = groupId;
+    socket.userName = userName;
+    socket.join(groupId);
+    socket.to(socket.groupId).broadcast.emit('group.emit', userName + '加入群组'+ groupId +'成功');
+    // io.sockets.in(socket.groupId).emit('group.emit', userName + '加入群组'+ groupId +'成功');
   });
+});
 
-  // when the user disconnects.. perform this
-  //socket.on('disconnect', function () {
-  //  socket.emit('device left'); //设备离线时推送
-  //});
+io.of('/room1').on('connection', function (socket) {
+  socket.on('order', function (message) {
+    var msg = socket.userName + ': ' + '回执：' + JSON.stringify(message);
+    socket.broadcast.emit('group.emit', msg);
+  });
+  // 加入群组
+  socket.on('join', function (userName) {
+    socket.userName = userName;
+    socket.broadcast.emit('group.emit', userName + '加入群组room1成功');
+  });
 });
