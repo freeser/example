@@ -1,0 +1,178 @@
+@import 'var.less';
+.colormain{
+    color: @main-color;
+}
+.colorwarn{
+    color: #F298AA;
+}
+#main{
+    header{
+        background: @main-color;
+        .outerdiv{
+            margin: 3.5rem 27% 3rem;
+            color: #fff;
+            .innerdiv{
+                position: relative;
+                padding-top: 100%;
+                height: 0;
+                & > *{
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    -webkit-transform: translate(-50%, -50%);
+                        -ms-transform: translate(-50%, -50%);
+                            transform: translate(-50%, -50%);
+                    border-radius: 50%;
+                }
+                .maintxt{
+                    z-index: 2;
+                    width: 100%;
+                    height: 100%;
+                    background: -webkit-radial-gradient(circle,#27C06D,#6CF4B2);
+                    background: -o-radial-gradient(circle,#27C06D,#6CF4B2);
+                    background: radial-gradient(circle,#27C06D,#6CF4B2);
+                    font-size: 1.25rem;
+                    .big20{
+                        font-size: 4rem;
+                        margin: 0 0 .8rem;
+                    }
+                }
+                .circle{
+                    z-index: 1;
+                    width: 108%;
+                    height: 108%;
+                    border: 1px solid #fff;
+                    opacity: .6;
+                    &::after{
+                        content: "";
+                        position: absolute;
+                        top: 0; left: 50%;
+                        background: #fff;
+                        width: 10px;height: 10px;
+                        border-radius: 50%;
+                        -webkit-transform: translate(-50%, -50%);
+                            -ms-transform: translate(-50%, -50%);
+                                transform: translate(-50%, -50%);
+                    }
+                }
+            }
+            .discrible{
+                margin-top: 1.5em;
+                a{
+                    display: inline-block;
+                    border-radius: .8em;
+                    color: #fff;
+                    background: #0C8649;
+                    padding: 0 6px 0 10px;
+                    line-height: 1.8;
+                }
+            }
+        }
+    }
+    .mainpage{
+        background: #F6F6F8;
+        dl{
+            margin: 0 1rem; padding: 1rem 0;
+        }
+        dd{
+            & + dd{
+                margin-top: 10px;
+            }
+            .item{
+                background: #fff;
+                border-radius: 3px;
+                & + .item{
+                    margin-left: 10px;
+                }
+            }
+            p{
+                line-height: 1.5;
+                span{
+                    display: inline-block; padding: 0 1em;
+                    background: @main-color;
+                    border-radius: 1em;
+                    color: #fff;
+                    margin-bottom: .45rem;
+                }
+            }
+        }
+    }
+    .remotebtn{
+        display: block;
+        background: @main-color;
+        line-height: 3.5rem;
+        color: #fff;
+    }
+    .controlpage{
+        background: #fff;
+        .icons{
+            display: inline-block;
+            width: 3rem;
+            height: 3rem;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+        .close{
+            background-image: url(../img/close.png)
+        }
+        .close-smart{
+            background-image: url(../img/close-smart.png)
+        }
+        .handle{
+            background-image: url(../img/handle.png)
+        }
+        .open{
+            background-image: url(../img/open.png)
+        }
+        .open-smart{
+            background-image: url(../img/open-smart.png)
+        }
+        .sleep{
+            background-image: url(../img/sleep.png)
+        }
+        input:checked{
+            & + .icons{
+                &.close{
+                    background-image: url(../img/close-active.png)
+                }
+                &.close-smart{
+                    background-image: url(../img/close-smart-active.png)
+                }
+                &.handle{
+                    background-image: url(../img/handle-active.png)
+                }
+                &.open{
+                    background-image: url(../img/open-active.png)
+                }
+                &.open-smart{
+                    background-image: url(../img/open-smart-active.png)
+                }
+                &.sleep{
+                    background-image: url(../img/sleep-active.png)
+                }
+            }
+        }
+        dd{
+            padding: 1rem 0;
+            margin: 0 1rem;
+            span{
+                display: block;
+            }
+            label{
+                position: relative;
+                input{
+                    position: absolute;
+                    top: 50%; left: 50%; opacity: 0;
+                    -webkit-transform: translate(-50%, -50%);
+                        -ms-transform: translate(-50%, -50%);
+                            transform: translate(-50%, -50%);
+                    zoom: 3;
+                }
+            }
+            &+dd{
+                border-top: 1px solid #eee;
+            }
+        }
+    }
+}

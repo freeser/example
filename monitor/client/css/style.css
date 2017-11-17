@@ -1,0 +1,180 @@
+/* flex父元素上设置子元素水平方向对齐方式 */
+/* flex父元素上设置子元素垂直方向对齐方式 */
+/* 模拟边框 */
+/* 箭头 */
+/* 多行文本加省略号 */
+.colormain {
+  color: #27C06D;
+}
+.colorwarn {
+  color: #F298AA;
+}
+#main header {
+  background: #27C06D;
+}
+#main header .outerdiv {
+  margin: 3.5rem 27% 3rem;
+  color: #fff;
+}
+#main header .outerdiv .innerdiv {
+  position: relative;
+  padding-top: 100%;
+  height: 0;
+}
+#main header .outerdiv .innerdiv > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+#main header .outerdiv .innerdiv .maintxt {
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: -webkit-radial-gradient(circle, #27C06D, #6CF4B2);
+  background: -o-radial-gradient(circle, #27C06D, #6CF4B2);
+  background: radial-gradient(circle, #27C06D, #6CF4B2);
+  font-size: 1.25rem;
+}
+#main header .outerdiv .innerdiv .maintxt .big20 {
+  font-size: 4rem;
+  margin: 0 0 .8rem;
+}
+#main header .outerdiv .innerdiv .circle {
+  z-index: 1;
+  width: 108%;
+  height: 108%;
+  border: 1px solid #fff;
+  opacity: .6;
+}
+#main header .outerdiv .innerdiv .circle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  background: #fff;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+#main header .outerdiv .discrible {
+  margin-top: 1.5em;
+}
+#main header .outerdiv .discrible a {
+  display: inline-block;
+  border-radius: .8em;
+  color: #fff;
+  background: #0C8649;
+  padding: 0 6px 0 10px;
+  line-height: 1.8;
+}
+#main .mainpage {
+  background: #F6F6F8;
+}
+#main .mainpage dl {
+  margin: 0 1rem;
+  padding: 1rem 0;
+}
+#main .mainpage dd + dd {
+  margin-top: 10px;
+}
+#main .mainpage dd .item {
+  background: #fff;
+  border-radius: 3px;
+}
+#main .mainpage dd .item + .item {
+  margin-left: 10px;
+}
+#main .mainpage dd p {
+  line-height: 1.5;
+}
+#main .mainpage dd p span {
+  display: inline-block;
+  padding: 0 1em;
+  background: #27C06D;
+  border-radius: 1em;
+  color: #fff;
+  margin-bottom: .45rem;
+}
+#main .remotebtn {
+  display: block;
+  background: #27C06D;
+  line-height: 3.5rem;
+  color: #fff;
+}
+#main .controlpage {
+  background: #fff;
+}
+#main .controlpage .icons {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+#main .controlpage .close {
+  background-image: url(../img/close.png);
+}
+#main .controlpage .close-smart {
+  background-image: url(../img/close-smart.png);
+}
+#main .controlpage .handle {
+  background-image: url(../img/handle.png);
+}
+#main .controlpage .open {
+  background-image: url(../img/open.png);
+}
+#main .controlpage .open-smart {
+  background-image: url(../img/open-smart.png);
+}
+#main .controlpage .sleep {
+  background-image: url(../img/sleep.png);
+}
+#main .controlpage input:checked + .icons.close {
+  background-image: url(../img/close-active.png);
+}
+#main .controlpage input:checked + .icons.close-smart {
+  background-image: url(../img/close-smart-active.png);
+}
+#main .controlpage input:checked + .icons.handle {
+  background-image: url(../img/handle-active.png);
+}
+#main .controlpage input:checked + .icons.open {
+  background-image: url(../img/open-active.png);
+}
+#main .controlpage input:checked + .icons.open-smart {
+  background-image: url(../img/open-smart-active.png);
+}
+#main .controlpage input:checked + .icons.sleep {
+  background-image: url(../img/sleep-active.png);
+}
+#main .controlpage dd {
+  padding: 1rem 0;
+  margin: 0 1rem;
+}
+#main .controlpage dd span {
+  display: block;
+}
+#main .controlpage dd label {
+  position: relative;
+}
+#main .controlpage dd label input {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  zoom: 3;
+}
+#main .controlpage dd + dd {
+  border-top: 1px solid #eee;
+}

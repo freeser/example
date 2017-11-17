@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+  <title>遥控示例</title>
+  <script>
+      (function () {
+          function o() {
+              document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ? 414 : document.documentElement.clientWidth) * 13 / 375) + "px"
+          }
+          var e = null;
+          window.addEventListener("resize", function () {
+              clearTimeout(e), e = setTimeout(o, 100)
+          }, !1), o()
+      })(window);
+  </script>
+  <link rel="stylesheet" href="font/iconfont.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="main" class="flex column h100vh">
+      <header class="flex_1">
+          <div class="outerdiv">
+              <div class="innerdiv">
+                <div class="circle"></div>
+                <div class="maintxt tcenter flex acenter jcenter">
+                  <div>
+                      <div>空气质量</div>
+                      <div class="big20">优</div>
+                      <div>PM2.5: 6pg/m³</div>
+                  </div>
+                </div>
+              </div>
+              <div class="discrible tcenter">
+                <a href="detail.html">空气质量详情 <i class="iconfont icon-more"></i></a>
+              </div>
+          </div>
+      </header>
+      <section class="mainpage flex_1 scroll">
+          <dl class="flex column h100 bbox">
+            <dd class="flex_1 flex">
+              <div class="flex_1 flex column acenter jcenter item">
+                  <p>
+                    <span>PM2.5</span>
+                  </p>
+                  <div>
+                    <p>室内&emsp;<label class="colormain">6pg/m³</label></p>
+                    <p>室外&emsp;<label class="colorwarn">256pg/m³</label></p>
+                  </div>
+              </div>
+              <div class="flex_1 flex column acenter jcenter item">
+                  <p>
+                    <span>PM10</span>
+                  </p>
+                  <div>
+                    <p>室内&emsp;<label class="colormain">6pg/m³</label></p>
+                    <p>室外&emsp;<label class="colorwarn">256pg/m³</label></p>
+                  </div>
+              </div>
+            </dd>
+            <dd class="flex_1 flex">
+                <div class="flex_1 flex column acenter jcenter item">
+                    <p>
+                      <span>甲醛</span>
+                    </p>
+                    <p class="colormain">优&emsp;6pg/m³</p>
+                </div>
+                <div class="flex_1 flex column acenter jcenter item">
+                    <p>
+                      <span>TVQC</span>
+                    </p>
+                    <p class="colormain">优&emsp;6pg/m³</p>
+                </div>
+              </dd>
+              <dd class="flex_1 flex">
+                  <div class="flex_1 flex column acenter jcenter item">
+                      <p>
+                        <span>CO2</span>
+                      </p>
+                      <p class="colormain">优&emsp;6pg/m³</p>
+                  </div>
+                  <div class="flex_1 flex column acenter jcenter item">
+                      <p>
+                        <span>温湿度</span>
+                      </p>
+                      <div>
+                        <p>温度&emsp;<label class="colormain">25℃</label></p>
+                        <p>湿度&emsp;<label class="colorwarn">35%</label></p>
+                      </div>
+                  </div>
+                </dd>
+          </dl>
+      </section>
+      <footer>
+        <a href="controls.html" class="remotebtn tcenter big18">远程控制</a>
+      </footer>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script>
+      var socket = io();
+      var groupId = getParam('group');
+      var userName = getParam('user');
+      socket.on('connect', () => {
+          log('连接成功：' + socket.id);
+          // 加入群组
+          groupId && socket.emit('group', groupId, userName);
+      });
+
+      //接收消息
+      socket.on('clientMsg', function (data) {
+         log(data);
+         console.log('clientMsg', data);
+      });
+      //群组消息
+      socket.on('group.emit', function (data) {
+         console.log('group.emit', data);
+      });
+
+      //断开连接（系统方法disconnct不可更改为其它）
+      socket.on('disconnect', function () {
+        log('连接断开!');
+      });
+
+      //重新连接
+      socket.on('reconnect', function () {
+        log('重新连接...');
+      });
+
+      //连接失败
+      socket.on('reconnect_error', function () {
+        log('连接失败!');
+      });
+
+      function msgToSer (msg) {
+          socket.emit('order', msg)
+      }
+
+      function rangechange (name, value) {
+        msgToSer(name + '_' + value);
+      }
+
+      function datechange (name, value) {
+        msgToSer(name + '_' + value);
+      }
+
+      function log (message) {
+          console.log('message', message);
+      }
+
+      function getParam(name, href) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(href || window.location.href);
+        if (results == null)
+          return "";
+        else
+          return results[1];
+      }
+  </script>
+</body>
+</html>
