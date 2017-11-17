@@ -67,6 +67,57 @@
                     line-height: 1.8;
                 }
             }
+            .icon-wifi{
+                position: absolute; top: 1rem;right: 1rem;
+                background: #168850;
+                border-radius: 50%;
+                width: 3rem;
+                height: 3rem;
+                text-align: center;
+                line-height: 3rem;
+                font-size: 2rem;
+            }
+        }
+        .stateonoff{
+            background: #0DA35A;
+            padding: 1rem; color: #fff;
+            .icon-icon{
+                background: #2b8130;
+                color: #fff;
+                padding: 1px;
+                border-radius: 2px;
+            }
+            .item + .item{
+                margin-left: 1rem; padding-left: 1rem;
+                border-left: 1px solid #84b78c;
+            }
+            .progress{
+                position: relative; text-align: center;
+                &:before{
+                    content: "";
+                    position: absolute; left: 0;
+                    top: 50%;
+                    -webkit-transform: translateY(-50%);
+                        -ms-transform: translateY(-50%);
+                            transform: translateY(-50%);
+                    display: inline-block;
+                    height: 1rem; width: 60%;
+                    border-radius: 1rem; z-index: 1;
+                }
+                i{
+                    position: relative; z-index: 2;
+                    font-style: normal;
+                }
+                &.blue::before{
+                    background: #3a4aef;
+                }
+                &.red::before{
+                    background: #FF0000;
+                }
+                &.orange::before{
+                    background: #FFAD08;
+                }
+            }
         }
     }
     .mainpage{
@@ -172,6 +223,23 @@
             }
             &+dd{
                 border-top: 1px solid #eee;
+            }
+        }
+    }
+    footer{
+        padding: 1rem .5rem;
+        button{
+            background: #D0CDC7;
+            border: 0;
+            color: #fff;
+            height: 3rem;
+            border-radius: 4px;
+            padding: 0 .7rem;
+            &+button{
+                margin-left: .5rem;
+            }
+            .iconfont{
+                font-size: 1.5rem;
             }
         }
     }

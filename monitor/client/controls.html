@@ -33,13 +33,17 @@
                   </div>
                 </div>
               </div>
+              <i class="iconfont icon-wifi"></i>
           </div>
           <div class="stateonoff flex">
-              <div class="flex_1">
-                  滤芯容量：
+              <div class="flex_1 flex acenter jcenter item">
+                  <label>滤芯容量：</label>
+                  <span class="flex_1 progress orange"><i>60%</i></span>
+                  <i class="iconfont icon-icon"></i>
               </div>
-              <div class="flex_1">
-                  滤芯效率;
+              <div class="flex_1 flex acenter jcenter item">
+                <label>滤芯效率：</label>
+                <span class="flex_1 progress red"><i>低</i></span>
               </div>
           </div>
       </header>
@@ -88,7 +92,7 @@
         <button><i class="iconfont icon-dingshi"></i> 定时关机</button>
       </footer>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script>
       var socket = io();
       var groupId = getParam('group');
@@ -150,6 +154,6 @@
         else
           return results[1];
       }
-  </script>
+  </script> -->
 </body>
 </html>

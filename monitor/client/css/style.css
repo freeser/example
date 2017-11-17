@@ -74,6 +74,66 @@
   padding: 0 6px 0 10px;
   line-height: 1.8;
 }
+#main header .outerdiv .icon-wifi {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #168850;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  line-height: 3rem;
+  font-size: 2rem;
+}
+#main header .stateonoff {
+  background: #0DA35A;
+  padding: 1rem;
+  color: #fff;
+}
+#main header .stateonoff .icon-icon {
+  background: #2b8130;
+  color: #fff;
+  padding: 1px;
+  border-radius: 2px;
+}
+#main header .stateonoff .item + .item {
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid #84b78c;
+}
+#main header .stateonoff .progress {
+  position: relative;
+  text-align: center;
+}
+#main header .stateonoff .progress:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  display: inline-block;
+  height: 1rem;
+  width: 60%;
+  border-radius: 1rem;
+  z-index: 1;
+}
+#main header .stateonoff .progress i {
+  position: relative;
+  z-index: 2;
+  font-style: normal;
+}
+#main header .stateonoff .progress.blue::before {
+  background: #3a4aef;
+}
+#main header .stateonoff .progress.red::before {
+  background: #FF0000;
+}
+#main header .stateonoff .progress.orange::before {
+  background: #FFAD08;
+}
 #main .mainpage {
   background: #F6F6F8;
 }
@@ -177,4 +237,21 @@
 }
 #main .controlpage dd + dd {
   border-top: 1px solid #eee;
+}
+#main footer {
+  padding: 1rem .5rem;
+}
+#main footer button {
+  background: #D0CDC7;
+  border: 0;
+  color: #fff;
+  height: 3rem;
+  border-radius: 4px;
+  padding: 0 .7rem;
+}
+#main footer button + button {
+  margin-left: .5rem;
+}
+#main footer button .iconfont {
+  font-size: 1.5rem;
 }
