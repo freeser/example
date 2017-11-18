@@ -5,7 +5,7 @@
 .colorwarn{
     color: #F298AA;
 }
-#main{
+.main{
     header{
         background: @main-color;
         .outerdiv{
@@ -213,12 +213,8 @@
             label{
                 position: relative;
                 input{
-                    position: absolute;
-                    top: 50%; left: 50%; opacity: 0;
-                    -webkit-transform: translate(-50%, -50%);
-                        -ms-transform: translate(-50%, -50%);
-                            transform: translate(-50%, -50%);
-                    zoom: 3;
+                    opacity: 0;
+                    zoom: 0;  display: none;
                 }
             }
             &+dd{
@@ -242,5 +238,41 @@
                 font-size: 1.5rem;
             }
         }
+    }
+}
+.chartreport{
+    footer{
+        padding-bottom: 8rem;
+        p{
+            text-align: center;
+            color: @main-color;
+            font-size: 1.6rem;
+            .big20{
+                color: #E58147;
+                font-size: 2rem;
+            }
+        }
+    }
+}
+
+.setpage{
+    #next{
+        dd{
+            padding: 1rem 0;
+            input{
+                width: 8rem; height: 2rem;
+                margin-right: .5rem;
+            }
+            select{
+                width: 8.4rem; height: 2.4rem;
+                margin-right: .5rem;
+            }
+            .block{
+                margin-bottom: 1rem;
+            }
+        }
+    }
+    button{
+        height: 4rem; width: 100%; background: #27C06D;color:#fff; border:0;border-radius: 3px;
     }
 }

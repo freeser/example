@@ -18,9 +18,11 @@
   <link rel="stylesheet" href="font/iconfont.css">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/vue.min.js"></script>
+  <script src="js/socket.io.js"></script>
 </head>
-<body>
-  <div id="main" class="flex column h100vh">
+<body style="display:none;">
+  <div id="main" class="main flex column h100vh">
       <header class="flex_1">
           <div class="outerdiv">
               <div class="innerdiv">
@@ -28,8 +30,8 @@
                 <div class="maintxt tcenter flex acenter jcenter">
                   <div>
                       <div>空气质量</div>
-                      <div class="big20">优</div>
-                      <div>PM2.5: 6pg/m³</div>
+                      <div class="big20">{{area}}</div>
+                      <div>PM2.5: {{areaqua}}pg/m³</div>
                   </div>
                 </div>
               </div>
@@ -46,8 +48,8 @@
                     <span>PM2.5</span>
                   </p>
                   <div>
-                    <p>室内&emsp;<label class="colormain">6pg/m³</label></p>
-                    <p>室外&emsp;<label class="colorwarn">256pg/m³</label></p>
+                    <p>室内&emsp;<label class="colormain">{{pmin}}pg/m³</label></p>
+                    <p>室外&emsp;<label class="colorwarn">{{pmout}}pg/m³</label></p>
                   </div>
               </div>
               <div class="flex_1 flex column acenter jcenter item">
@@ -55,8 +57,8 @@
                     <span>PM10</span>
                   </p>
                   <div>
-                    <p>室内&emsp;<label class="colormain">6pg/m³</label></p>
-                    <p>室外&emsp;<label class="colorwarn">256pg/m³</label></p>
+                    <p>室内&emsp;<label class="colormain">{{pm10in}}pg/m³</label></p>
+                    <p>室外&emsp;<label class="colorwarn">{{pm10out}}pg/m³</label></p>
                   </div>
               </div>
             </dd>
@@ -65,13 +67,13 @@
                     <p>
                       <span>甲醛</span>
                     </p>
-                    <p class="colormain">优&emsp;6pg/m³</p>
+                    <p class="colormain">{{jiaquan}}&emsp;{{jiaquannum}}pg/m³</p>
                 </div>
                 <div class="flex_1 flex column acenter jcenter item">
                     <p>
                       <span>TVQC</span>
                     </p>
-                    <p class="colormain">优&emsp;6pg/m³</p>
+                    <p class="colormain">{{TVQC}}&emsp;{{TVQCnum}}pg/m³</p>
                 </div>
               </dd>
               <dd class="flex_1 flex">
@@ -79,15 +81,15 @@
                       <p>
                         <span>CO2</span>
                       </p>
-                      <p class="colormain">优&emsp;6pg/m³</p>
+                      <p class="colormain">{{co2}}&emsp;{{co2num}}pg/m³</p>
                   </div>
                   <div class="flex_1 flex column acenter jcenter item">
                       <p>
                         <span>温湿度</span>
                       </p>
                       <div>
-                        <p>温度&emsp;<label class="colormain">25℃</label></p>
-                        <p>湿度&emsp;<label class="colorwarn">35%</label></p>
+                        <p>温度&emsp;<label class="colormain">{{wendu}}℃</label></p>
+                        <p>湿度&emsp;<label class="colorwarn">{{shidu}}%</label></p>
                       </div>
                   </div>
                 </dd>
@@ -97,5 +99,59 @@
         <a href="controls.html" class="remotebtn tcenter big18">远程控制</a>
       </footer>
   </div>
+  <script>
+    var Page = new Vue({
+      el: '#main',
+      data: {
+        area: '优',
+        areaqua: '6',
+        pmin: '4',
+        pmout: '156',
+        pm10in: '7',
+        pm10out: '226',
+        jiaquan: '优',
+        jiaquannum: '2',
+        TVQC: '良',
+        TVQCnum: '34',
+        co2: '好',
+        co2num: '12',
+        wendu: '23',
+        shidu: '45'
+      },
+      mounted () {
+        document.getElementsByTagName('body')[0].style.display = 'block';
+      }
+    })
+  </script>
+  <script>
+      var socket = io();
+      socket.on('connect', () => {
+          log('连接成功：' + socket.id);
+      });
+      //接收消息
+      socket.on('clientMsg', function (data) {
+        console.log('clientMsg', data);
+        // 赋值方法
+        Page.area = '好'
+     });
+      //断开连接（系统方法disconnct不可更改为其它）
+      socket.on('disconnect', function () {
+        log('连接断开!');
+      });
+      //重新连接
+      socket.on('reconnect', function () {
+        log('重新连接...');
+      });
+      //连接失败
+      socket.on('reconnect_error', function () {
+        log('连接失败!');
+      });
+      function msgToSer (msg) {
+          socket.emit('order', msg)
+      }
+      function log (message) {
+          console.log('message', message);
+      }
+  </script>
 </body>
 </html>

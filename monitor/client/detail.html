@@ -18,8 +18,68 @@
   <link rel="stylesheet" href="font/iconfont.css">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src= "https://img.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+  <script src= "https://img.hcharts.cn/highcharts/highcharts.js"></script>
+  <script src= "https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
 </head>
-<body>
-
+<body class="chartreport">
+    <section class="flex column h100vh">
+        <div id='container' class="w100vw flex_1"></div>
+        <footer>
+            <p>恭喜你</p>
+            <p>战胜了<span class="big20">85%</span>的家庭</p>
+        </footer>
+    </section>
+    <script>
+        $(function () {
+            $('#container').highcharts({
+                chart: {
+                    type: 'areaspline'
+                },
+                title: {
+                    text: ''
+                },
+                legend: {
+                    verticalAlign: 'top'
+                },
+                xAxis: {
+                    categories: [
+                        '周一',
+                        '周二',
+                        '周三',
+                        '周四',
+                        '周五',
+                        '周六',
+                        '周日'
+                    ]
+                },
+                yAxis: {
+                    title: {
+                        text: ''
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    valueSuffix: ' 单位'
+                },
+                credits: {
+                    enabled: false
+                },
+                plotOptions: {
+                    areaspline: {
+                        fillOpacity: 0.5
+                    }
+                },
+                series: [{
+                    name: '室内',
+                    data: [3, 4, 3, 5, 4, 8, 10]
+                }, {
+                    name: '室外',
+                    data: [1, 3, 4, 3, 3, 5, 4]
+                }]
+            });
+        });
+        
+    </script>
 </body>
 </html>
