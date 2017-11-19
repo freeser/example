@@ -1,139 +1,204 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
-  <title>遥控示例</title>
+  <title>我的新风质量</title>
   <script>
-      (function () {
-          function o() {
-              document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ? 414 : document.documentElement.clientWidth) * 13 / 375) + "px"
-          }
-          var e = null;
-          window.addEventListener("resize", function () {
-              clearTimeout(e), e = setTimeout(o, 100)
-          }, !1), o()
-      })(window);
+    (function () {
+      function o() {
+        document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ? 414 :
+          document.documentElement.clientWidth) * 13 / 375) + "px"
+      }
+      var e = null;
+      window.addEventListener("resize", function () {
+        clearTimeout(e), e = setTimeout(o, 100)
+      }, !1), o()
+    })(window);
   </script>
   <link rel="stylesheet" href="font/iconfont.css">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/jquery.min.js"></script>
+  <script>
+    var code = getParam('code');
+    var openid = sessionStorage.getItem('_openid_');
+    if (!openid && code) {
+      $.get('/getopenid', {
+        code: code
+      }).done(function (_openid) {
+        sessionStorage.setItem('_openid_', openid = _openid);
+        getDeviceId();
+      })
+    } else if (!openid && !code) {
+      location.replace('404.html');
+    } else if (openid) {
+      getDeviceId();
+    }
+
+    function getParam(name, href) {
+      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+      var regexS = "[\\?&]" + name + "=([^&#]*)";
+      var regex = new RegExp(regexS);
+      var results = regex.exec(href || window.location.href);
+      return results ? results[1] : "";
+    }
+
+    function getDeviceId() {
+      $.get('/getdevideid', {
+        openid: openid
+      }).done(function (deviceId) {
+        initPage(deviceId)
+      })
+    }
+  </script>
   <script src="js/vue.min.js"></script>
   <script src="js/socket.io.js"></script>
 </head>
+
 <body style="display:none;">
   <div id="main" class="main flex column h100vh">
-      <header class="flex_1">
-          <div class="outerdiv">
-              <div class="innerdiv">
-                <div class="circle"></div>
-                <div class="maintxt tcenter flex acenter jcenter">
-                  <div>
-                      <div>空气质量</div>
-                      <div class="big20">{{area}}</div>
-                      <div>PM2.5: {{areaqua}}pg/m³</div>
-                  </div>
-                </div>
-              </div>
-              <div class="discrible tcenter">
-                <a href="detail.html">空气质量详情 <i class="iconfont icon-more"></i></a>
-              </div>
+    <header class="flex_1">
+      <div class="outerdiv">
+        <div class="innerdiv">
+          <div class="circle"></div>
+          <div class="maintxt tcenter flex acenter jcenter">
+            <div>
+              <div>空气质量</div>
+              <div class="big20">{{airQuality}}</div>
+              <div>PM2.5: {{standardPm2_5}}pg/m³</div>
+            </div>
           </div>
-      </header>
-      <section class="mainpage flex_1 scroll">
-          <dl class="flex column h100 bbox">
-            <dd class="flex_1 flex">
-              <div class="flex_1 flex column acenter jcenter item">
-                  <p>
-                    <span>PM2.5</span>
-                  </p>
-                  <div>
-                    <p>室内&emsp;<label class="colormain">{{pmin}}pg/m³</label></p>
-                    <p>室外&emsp;<label class="colorwarn">{{pmout}}pg/m³</label></p>
-                  </div>
-              </div>
-              <div class="flex_1 flex column acenter jcenter item">
-                  <p>
-                    <span>PM10</span>
-                  </p>
-                  <div>
-                    <p>室内&emsp;<label class="colormain">{{pm10in}}pg/m³</label></p>
-                    <p>室外&emsp;<label class="colorwarn">{{pm10out}}pg/m³</label></p>
-                  </div>
-              </div>
-            </dd>
-            <dd class="flex_1 flex">
-                <div class="flex_1 flex column acenter jcenter item">
-                    <p>
-                      <span>甲醛</span>
-                    </p>
-                    <p class="colormain">{{jiaquan}}&emsp;{{jiaquannum}}pg/m³</p>
-                </div>
-                <div class="flex_1 flex column acenter jcenter item">
+        </div>
+        <div class="discrible tcenter">
+          <a href="detail.html">空气质量详情
+            <i class="iconfont icon-more"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+    <section class="mainpage flex_1 scroll">
+      <dl class="flex column h100 bbox">
+        <dd class="flex_1 flex">
+          <div class="flex_1 flex column acenter jcenter item">
+            <p>
+              <span>PM2.5</span>
+            </p>
+            <div>
+              <p>室内&emsp;
+                <label class="colormain">{{standardPm2_5}}pg/m³</label>
+              </p>
+              <p>室外&emsp;
+                <label class="colorwarn">{{atmosPm2_5}}pg/m³</label>
+              </p>
+            </div>
+          </div>
+          <div class="flex_1 flex column acenter jcenter item">
+            <p>
+              <span>PM10</span>
+            </p>
+            <div>
+              <p>室内&emsp;
+                <label class="colormain">{{standardPm10}}pg/m³</label>
+              </p>
+              <p>室外&emsp;
+                <label class="colorwarn">{{atmosPm10}}pg/m³</label>
+              </p>
+            </div>
+          </div>
+        </dd>
+        <dd class="flex_1 flex">
+          <div class="flex_1 flex column acenter jcenter item">
+            <p>
+              <span>甲醛</span>
+            </p>
+            <p class="colormain">{{formal}}&emsp;{{formalNum}}pg/m³</p>
+          </div>
+          <div class="flex_1 flex column acenter jcenter item">
+            <p>
+              <span>温湿度</span>
+            </p>
+            <div>
+              <p>温度&emsp;
+                <label class="colormain">{{temperature}}℃</label>
+              </p>
+              <p>湿度&emsp;
+                <label class="colorwarn">{{humidity}}%</label>
+              </p>
+            </div>
+          </div>
+          <!-- <div class="flex_1 flex column acenter jcenter item">
                     <p>
                       <span>TVQC</span>
                     </p>
-                    <p class="colormain">{{TVQC}}&emsp;{{TVQCnum}}pg/m³</p>
-                </div>
-              </dd>
-              <dd class="flex_1 flex">
+                    <p class="colormain">{{tvqc}}&emsp;{{tvqcNum}}pg/m³</p>
+                </div> -->
+        </dd>
+        <!-- <dd class="flex_1 flex">
                   <div class="flex_1 flex column acenter jcenter item">
                       <p>
                         <span>CO2</span>
                       </p>
-                      <p class="colormain">{{co2}}&emsp;{{co2num}}pg/m³</p>
+                      <p class="colormain">{{co2}}&emsp;{{co2Num}}pg/m³</p>
                   </div>
-                  <div class="flex_1 flex column acenter jcenter item">
-                      <p>
-                        <span>温湿度</span>
-                      </p>
-                      <div>
-                        <p>温度&emsp;<label class="colormain">{{wendu}}℃</label></p>
-                        <p>湿度&emsp;<label class="colorwarn">{{shidu}}%</label></p>
-                      </div>
-                  </div>
-                </dd>
-          </dl>
-      </section>
-      <footer>
-        <a href="controls.html" class="remotebtn tcenter big18">远程控制</a>
-      </footer>
+                  
+                </dd> -->
+      </dl>
+    </section>
+    <footer>
+      <a href="controls.html" class="remotebtn tcenter big18">远程控制</a>
+    </footer>
   </div>
-  <script>
-    var Page = new Vue({
-      el: '#main',
-      data: {
-        area: '优',
-        areaqua: '6',
-        pmin: '4',
-        pmout: '156',
-        pm10in: '7',
-        pm10out: '226',
-        jiaquan: '优',
-        jiaquannum: '2',
-        TVQC: '良',
-        TVQCnum: '34',
-        co2: '好',
-        co2num: '12',
-        wendu: '23',
-        shidu: '45'
-      },
-      mounted () {
-        document.getElementsByTagName('body')[0].style.display = 'block';
-      }
-    })
+  <script type="text/javascript">
+    $(function () {
+      // 获取服务器配置信息
+      $.ajax({
+        type: "post",
+        url: "http://api.windme.cn/windme/wx/get",
+        dataType: "json",
+        success: function (data) {
+          wx.config({
+            beta: true, // 开启内测接口调用，注入wx.invoke方法
+            debug: false, // 开启调试模式
+            appId: data.appId, // 第三方app唯一标识
+            timestamp: data.timestamp, // 生成签名的时间戳
+            nonceStr: data.nonce, // 生成签名的随机串
+            signature: data.signature, // 签名
+            jsApiList: ['configWXDeviceWiFi'] // 需要使用的jsapi列表
+          });
+        }
+      });
+    });
   </script>
   <script>
-      var socket = io();
+    function initPage(deviceId) {
+      var socket = io.connect('http://localhost:3000/')
       socket.on('connect', () => {
-          log('连接成功：' + socket.id);
+        log('连接成功：' + socket.id);
+        msgToSer(deviceId);
       });
       //接收消息
       socket.on('clientMsg', function (data) {
         console.log('clientMsg', data);
+        if (null == data) {
+          // 跳转设备离线页面
+        }
         // 赋值方法
-        Page.area = '好'
-     });
+        Page.airQuality = data.airQuality;
+        Page.standardPm2_5 = data.standardPm2_5;
+        Page.atmosPm2_5 = data.atmosPm2_5;
+        Page.standardPm10 = data.standardPm10;
+        Page.atmosPm10 = data.atmosPm10;
+        Page.formal = data.formal;
+        Page.formalNum = data.formalNum;
+        Page.tvoc = data.tvoc;
+        Page.tvocNum = data.tvocNum;
+        Page.co2 = data.co2;
+        Page.co2Num = data.co2Num;
+        Page.temperature = data.temperature;
+        Page.humidity = data.humidity;
+      });
       //断开连接（系统方法disconnct不可更改为其它）
       socket.on('disconnect', function () {
         log('连接断开!');
@@ -146,12 +211,39 @@
       socket.on('reconnect_error', function () {
         log('连接失败!');
       });
-      function msgToSer (msg) {
-          socket.emit('order', msg)
+    }
+    var Page = new Vue({
+      el: '#main',
+      data: {
+        airQuality: '优',
+        standardPm2_5: '6',
+        atmosPm2_5: '156',
+        standardPm10: '7',
+        atmosPm10: '226',
+        formal: '优',
+        formalNum: '2',
+        tvoc: '良',
+        tvocNum: '34',
+        co2: '好',
+        co2Num: '12',
+        temperature: '23',
+        humidity: '45'
+      },
+      mounted() {
+        document.getElementsByTagName('body')[0].style.display = 'block';
       }
-      function log (message) {
-          console.log('message', message);
-      }
+    })
+  </script>
+  <script>
+    //var socket = io();
+    function msgToSer(msg) {
+      socket.emit('order', 'index_' + msg)
+    }
+
+    function log(message) {
+      console.log('message', message);
+    }
   </script>
 </body>
+
 </html>

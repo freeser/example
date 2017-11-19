@@ -1,151 +1,201 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
-  <title>遥控示例</title>
-  <script>
-      (function () {
-          function o() {
-              document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ? 414 : document.documentElement.clientWidth) * 13 / 375) + "px"
-          }
-          var e = null;
-          window.addEventListener("resize", function () {
-              clearTimeout(e), e = setTimeout(o, 100)
-          }, !1), o()
-      })(window);
-  </script>
-  <link rel="stylesheet" href="font/iconfont.css">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/vue.min.js"></script>
-  <script src="js/socket.io.js"></script>
-</head>
-<body style="display:none;">
-  <div id="controls" class="main flex column h100vh">
-      <header>
-          <div class="outerdiv">
-              <div class="innerdiv">
-                <div class="circle"></div>
-                <div class="maintxt tcenter flex acenter jcenter">
-                  <div>
-                      <div>风量</div>
-                      <div class="big20">{{fengliang}}</div>
-                      <div>M/h</div>
-                  </div>
-                </div>
-              </div>
-              <i class="iconfont icon-wifi"></i>
-          </div>
-          <div class="stateonoff flex">
-              <div class="flex_1 flex acenter jcenter item">
-                  <label>滤芯容量：</label>
-                  <span class="flex_1 progress orange"><i>60%</i></span>
-                  <i class="iconfont icon-icon"></i>
-              </div>
-              <div class="flex_1 flex acenter jcenter item">
-                <label>滤芯效率：</label>
-                <span class="flex_1 progress red"><i>低</i></span>
-              </div>
-          </div>
-      </header>
-      <section class="controlpage flex_1 scroll">
-          <dl>
-            <dd class="flex acenter">
-              <label class="flex_1">辅热模式</label>
-              <label class="tcenter flex_1">
-                  <input type="checkbox" v-model="closesmart">
-                  <span class="icons close-smart" @click="toggel('closesmart')"></span>
-                  <span>智能模式</span>
-              </label>
-              <label class="tcenter flex_1">
-                  <input type="checkbox"  v-model="open">
-                  <span class="icons open" @click="toggel('open')"></span>
-                  <span>常开</span>
-              </label>
-              <label class="tcenter flex_1">
-                  <input type="checkbox"  v-model="close">
-                  <span class="icons close" @click="toggel('close')"></span>
-                  <span>常关</span>
-              </label>
-            </dd>
-            <dd class="flex acenter jcenter">
-              <label class="flex_1">风机模式</label>
-              <label class="tcenter flex_1">
-                  <input type="checkbox"  v-model="opensmart">
-                  <span class="icons open-smart" @click="toggel('opensmart')"></span>
-                  <span>智能模式</span>
-              </label>
-              <label class="tcenter flex_1">
-                  <input type="checkbox"  v-model="handle">
-                  <span class="icons handle" @click="toggel('handle')"></span>
-                  <span>手动模式</span>
-              </label>
-              <label class="tcenter flex_1">
-                  <input type="checkbox"  v-model="sleep">
-                  <span class="icons sleep" @click="toggel('sleep')"></span>
-                  <span>睡眠模式</span>
-              </label>
-            </dd>
-          </dl>
-      </section>
-      <footer class="flex">
-        <button class="flex_1"><i class="iconfont icon-guanji"></i> 关机</button>
-        <button><i class="iconfont icon-dingshi"></i> 定时关机</button>
-      </footer>
-  </div>
-  <script>
-    var Ctrl = new Vue({
-      el: '#controls',
-      data: {
-        fengliang: '250',
-        closesmart: false,
-        open: true,
-        close: false,
-        opensmart: true,
-        handle: false,
-        sleep: true
-      },
-      mounted () {
-        document.getElementsByTagName('body')[0].style.display = 'block';
-      },
-      methods: {
-        toggel: function(key){
-            this[key] = !this[key]//可以通过socket.io回传改变值
-            socket.emit('order', 'key' + this[key])
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
+    <title>远程遥控</title>
+    <script>
+        (function () {
+            function o() {
+                document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ?
+                    414 : document.documentElement.clientWidth) * 13 / 375) + "px"
+            }
+            var e = null;
+            window.addEventListener("resize", function () {
+                clearTimeout(e), e = setTimeout(o, 100)
+            }, !1), o()
+        })(window);
+    </script>
+    <link rel="stylesheet" href="font/iconfont.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://img.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+    <script>
+        var code = getParam('code');
+        var openid = sessionStorage.getItem('_openid_');
+        if (!openid && code) {
+            $.get('/getopenid', {
+                code: code
+            }).done(function (_openid) {
+                sessionStorage.setItem('_openid_', openid = _openid);
+                getDeviceId();
+            })
+        } else if (!openid && !code) {
+            location.replace('404.html');
+        } else if (openid) {
+            getDeviceId();
         }
-      }
-    })
-  </script>
-  <script>
-      var socket = io();
-      socket.on('connect', () => {
-          log('连接成功：' + socket.id);
-      });
-      //接收消息
-      socket.on('clientMsg', function (data) {
-         console.log('clientMsg', data);
-         // 赋值方法
-         Ctrl.fengliang = '1234'
-      });
-      //断开连接（系统方法disconnct不可更改为其它）
-      socket.on('disconnect', function () {
-        log('连接断开!');
-      });
-      //重新连接
-      socket.on('reconnect', function () {
-        log('重新连接...');
-      });
-      //连接失败
-      socket.on('reconnect_error', function () {
-        log('连接失败!');
-      });
-    //   function msgToSer (msg) {
-    //       socket.emit('order', msg)
-    //   }
-      function log (message) {
-          console.log('message', message);
-      }
-  </script>
+
+        function getParam(name, href) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(href || window.location.href);
+            return results ? results[1] : "";
+        }
+
+        function getDeviceId() {
+            $.get('/getdevideid', {
+                openid: openid
+            }).done(function (deviceId) {
+                initPage(deviceId)
+            })
+        }
+    </script>
+
+</head>
+
+<body style="display:none;">
+    <div id="controls" class="main flex column h100vh">
+        <header>
+            <div class="outerdiv">
+                <div class="innerdiv">
+                    <div class="circle"></div>
+                    <div class="maintxt tcenter flex acenter jcenter">
+                        <div>
+                            <div>风量</div>
+                            <div class="big20">{{windNum}}</div>
+                            <div>M/h</div>
+                        </div>
+                    </div>
+                </div>
+                <i class="iconfont icon-wifi"></i>
+            </div>
+            <div class="stateonoff flex">
+                <div class="flex_1 flex acenter jcenter item">
+                    <label>滤芯容量：</label>
+                    <span class="flex_1 progress orange">
+                        <i>60%</i>
+                    </span>
+                    <i class="iconfont icon-icon"></i>
+                </div>
+                <div class="flex_1 flex acenter jcenter item">
+                    <label>滤芯效率：</label>
+                    <span class="flex_1 progress red">
+                        <i>低</i>
+                    </span>
+                </div>
+            </div>
+        </header>
+        <section class="controlpage flex_1 scroll">
+            <dl>
+                <dd class="flex acenter">
+                    <label class="flex_1">辅热模式</label>
+                    <label class="tcenter flex_1">
+                        <input type="radio" v-model="heatingModel" value="1">
+                        <span class="icons close-smart" @click="toggel('HeatingAuto')"></span>
+                        <span>智能模式</span>
+                    </label>
+                    <label class="tcenter flex_1">
+                        <input type="radio" v-model="heatingModel" value="2">
+                        <span class="icons open" @click="toggel('HeatingOn')"></span>
+                        <span>常开</span>
+                    </label>
+                    <label class="tcenter flex_1">
+                        <input type="radio" v-model="heatingModel" value="3">
+                        <span class="icons close" @click="toggel('HeatingOff')"></span>
+                        <span>常关</span>
+                    </label>
+                </dd>
+                <dd class="flex acenter jcenter">
+                    <label class="flex_1">风机模式</label>
+                    <label class="tcenter flex_1">
+                        <input type="radio" v-model="windModel" value="1">
+                        <span class="icons open-smart" @click="toggel('WindAuto')"></span>
+                        <span>智能模式</span>
+                    </label>
+                    <label class="tcenter flex_1">
+                        <input type="radio" v-model="windModel" value="2">
+                        <span class="icons handle" @click="toggel('WindManual')"></span>
+                        <span>手动模式</span>
+                    </label>
+                    <label class="tcenter flex_1">
+                        <input type="radio" v-model="windModel" value="3">
+                        <span class="icons sleep" @click="toggel('Sleep')"></span>
+                        <span>睡眠模式</span>
+                    </label>
+                </dd>
+            </dl>
+        </section>
+        <footer class="flex">
+            <button class="flex_1">
+                <i class="iconfont icon-guanji"></i> 关机</button>
+            <button>
+                <i class="iconfont icon-dingshi"></i> 定时关机</button>
+        </footer>
+    </div>
+    <script src="js/vue.min.js"></script>
+    <script src="js/socket.io.js"></script>
+    <script>
+        function initPage(deviceId) {
+            var Ctrl = new Vue({
+                el: '#controls',
+                data: {
+                    windNum: '250',
+                    heatingModel: 2,
+                    windModel: 3
+                },
+                mounted() {
+                    document.getElementsByTagName('body')[0].style.display = 'block';
+                },
+                methods: {
+                    toggel: function (key) {
+                        this[key] = !this[key] //可以通过socket.io回传改变值
+                        socket.emit('order', 'key_' + this[key] + '_' + deviceId)
+                    }
+                }
+            });
+            var socket = io.connect('http://localhost:3000/')
+            socket.on('connect', () => {
+                log('连接成功：' + socket.id);
+                socket.emit('order', 'key_status_' + deviceId)
+            });
+            //接收消息
+            socket.on('clientMsg', function (data) {
+                console.log('clientMsg', data);
+                if (null == data) {
+                    // 跳转设备离线页面
+                }
+                // 赋值方法
+                Ctrl.windNum = data.windNum;
+                Ctrl.heatingModel = data.heatingModel;
+                Ctrl.windModel = data.windModel;
+            });
+            //断开连接（系统方法disconnct不可更改为其它）
+            socket.on('disconnect', function () {
+                log('连接断开!');
+            });
+            //重新连接
+            socket.on('reconnect', function () {
+                log('重新连接...');
+            });
+            //连接失败
+            socket.on('reconnect_error', function () {
+                log('连接失败!');
+            });
+        }
+    </script>
+    <script>
+        //var socket = io();
+
+        //   function msgToSer (msg) {
+        //       socket.emit('order', msg)
+        //   }
+        function log(message) {
+            console.log('message', message);
+        }
+    </script>
 </body>
+
 </html>
