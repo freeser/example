@@ -170,7 +170,7 @@
     </script>
     <script>
         var code = getParam('code');
-        var openid = sessionStorage.getItem('_openid_');
+        var openid = sessionStorage.getItem('_openid_') || getParam('openid') || '';
         if (!openid && code) {
             $.get('http://www.windme.cn:8090/system/wx/openid/get', {
                 code: code
