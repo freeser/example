@@ -20,39 +20,15 @@
     <link rel="stylesheet" href="font/iconfont.css">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://img.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
-    <script>
-        var code = getParam('code');
-        var openid = sessionStorage.getItem('_openid_');
-        if (!openid && code) {
-            $.get('http://api.windme.cn:8090/system/wx/openid/get', {
-                code: code
-            }).done(function (data) {
-                sessionStorage.setItem('_openid_', openid = data.openid);
-                getDeviceId();
-            })
-        } else if (!openid && !code) {
-            location.replace('404.html');
-        } else if (openid) {
-            getDeviceId();
-        }
-
-        function getParam(name, href) {
-            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-            var regexS = "[\\?&]" + name + "=([^&#]*)";
-            var regex = new RegExp(regexS);
-            var results = regex.exec(href || window.location.href);
-            return results ? results[1] : "";
-        }
-
-        function getDeviceId() {
-            $.get('http://api.windme.cn:8090/device/query', {
-                openid: openid
-            }).done(function (data) {
-                initPage(data.deviceId)
-            })
-        }
-    </script>
+    <style type="text/css">
+      .main footer button{
+        line-height: 3rem;
+        font-size: 1.3rem;
+      }
+      .main footer button.active{
+        background: #27C06D;
+      }
+    </style>
 
 </head>
 
@@ -129,12 +105,13 @@
             </dl>
         </section>
         <footer class="flex">
-            <button class="flex_1">
-                <i class="iconfont icon-guanji"></i> 关机</button>
-            <button>
+            <button type="button" class="flex_1" :class="{'active': poweron}" @click="powerManager">
+                <i class="iconfont icon-guanji"></i> {{ !poweron ? "开机" : "关机"}}</button>
+            <button type="button">
                 <i class="iconfont icon-dingshi"></i> 定时关机</button>
         </footer>
     </div>
+    <script src="https://img.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
     <script src="js/vue.min.js"></script>
     <script src="js/socket.io.js"></script>
     <script>
@@ -142,9 +119,10 @@
             var Ctrl = new Vue({
                 el: '#controls',
                 data: {
-                    windNum: '250',
+                    windNum: '-',
                     heatingModel: 2,
-                    windModel: 3
+                    windModel: 3,
+                    poweron: false
                 },
                 mounted() {
                     document.getElementsByTagName('body')[0].style.display = 'block';
@@ -153,11 +131,14 @@
                     toggel: function (key) {
                         this[key] = !this[key] //可以通过socket.io回传改变值
                         socket.emit('order', 'key_' + this[key] + '_' + deviceId)
+                    },
+                    powerManager: function(){
+                        this.poweron =! this.poweron
                     }
                 }
             });
             var socket = io.connect('http://api.windme.cn:3000/')
-            socket.on('connect', () => {
+            socket.on('connect', function () {
                 log('连接成功：' + socket.id);
                 socket.emit('order', 'key_status_' + deviceId)
             });
@@ -166,6 +147,7 @@
                 console.log('clientMsg', data);
                 if (null == data) {
                     // 跳转设备离线页面
+                    return;
                 }
                 // 赋值方法
                 Ctrl.windNum = data.windNum;
@@ -184,6 +166,38 @@
             socket.on('reconnect_error', function () {
                 log('连接失败!');
             });
+        }
+    </script>
+    <script>
+        var code = getParam('code');
+        var openid = sessionStorage.getItem('_openid_');
+        if (!openid && code) {
+            $.get('http://www.windme.cn:8090/system/wx/openid/get', {
+                code: code
+            }).done(function (data) {
+                sessionStorage.setItem('_openid_', openid = data.openid);
+                openid ? getDeviceId() : initPage();
+            })
+        } else if (!openid && !code) {
+            initPage();
+        } else if (openid) {
+            getDeviceId();
+        }
+
+        function getParam(name, href) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(href || window.location.href);
+            return results ? results[1] : "";
+        }
+
+        function getDeviceId() {
+            $.post('http://www.windme.cn:8090/device/query', {
+                openid: openid
+            }).done(function (data) {
+                initPage(data.deviceId)
+            })
         }
     </script>
     <script>
