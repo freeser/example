@@ -25,10 +25,10 @@
         var code = getParam('code');
         var openid = sessionStorage.getItem('_openid_');
         if (!openid && code) {
-            $.get('/getopenid', {
+            $.get('http://api.windme.cn:8090/system/wx/openid/get', {
                 code: code
-            }).done(function (_openid) {
-                sessionStorage.setItem('_openid_', openid = _openid);
+            }).done(function (data) {
+                sessionStorage.setItem('_openid_', openid = data.openid);
                 getDeviceId();
             })
         } else if (!openid && !code) {
@@ -46,10 +46,10 @@
         }
 
         function getDeviceId() {
-            $.get('/getdevideid', {
+            $.get('http://api.windme.cn:8090/device/query', {
                 openid: openid
-            }).done(function (deviceId) {
-                initPage(deviceId)
+            }).done(function (data) {
+                initPage(data.deviceId)
             })
         }
     </script>
@@ -156,7 +156,7 @@
                     }
                 }
             });
-            var socket = io.connect('http://localhost:3000/')
+            var socket = io.connect('http://api.windme.cn:3000/')
             socket.on('connect', () => {
                 log('连接成功：' + socket.id);
                 socket.emit('order', 'key_status_' + deviceId)

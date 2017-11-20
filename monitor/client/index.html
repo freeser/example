@@ -25,14 +25,14 @@
     var code = getParam('code');
     var openid = sessionStorage.getItem('_openid_');
     if (!openid && code) {
-      $.get('/getopenid', {
+      $.get('http://api.windme.cn:8090/system/wx/openid/get', {
         code: code
-      }).done(function (_openid) {
-        sessionStorage.setItem('_openid_', openid = _openid);
-        getDeviceId();
+      }).done(function (data) {
+        sessionStorage.setItem('_openid_', openid = data.openid);
+        openid ? getDeviceId() : initPage();
       })
     } else if (!openid && !code) {
-      location.replace('404.html');
+      initPage();
     } else if (openid) {
       getDeviceId();
     }
@@ -46,11 +46,13 @@
     }
 
     function getDeviceId() {
-      $.get('/getdevideid', {
+      $.get('http://api.windme.cn:8090/device/query', {
         openid: openid
-      }).done(function (deviceId) {
-        initPage(deviceId)
-      })
+      }).done(function (data) {
+        initPage(data.deviceid)
+      }).fail(function(){
+        initPage();
+      });
     }
   </script>
   <script src="js/vue.min.js"></script>
@@ -150,30 +152,10 @@
       <a href="controls.html" class="remotebtn tcenter big18">远程控制</a>
     </footer>
   </div>
-  <script type="text/javascript">
-    $(function () {
-      // 获取服务器配置信息
-      $.ajax({
-        type: "post",
-        url: "http://api.windme.cn/windme/wx/get",
-        dataType: "json",
-        success: function (data) {
-          wx.config({
-            beta: true, // 开启内测接口调用，注入wx.invoke方法
-            debug: false, // 开启调试模式
-            appId: data.appId, // 第三方app唯一标识
-            timestamp: data.timestamp, // 生成签名的时间戳
-            nonceStr: data.nonce, // 生成签名的随机串
-            signature: data.signature, // 签名
-            jsApiList: ['configWXDeviceWiFi'] // 需要使用的jsapi列表
-          });
-        }
-      });
-    });
-  </script>
   <script>
     function initPage(deviceId) {
-      var socket = io.connect('http://localhost:3000/')
+      var socket = io.connect('http://api.windme.cn:3000/');
+      deviceId = deviceId || '';
       socket.on('connect', () => {
         log('连接成功：' + socket.id);
         msgToSer(deviceId);
@@ -182,7 +164,7 @@
       socket.on('clientMsg', function (data) {
         console.log('clientMsg', data);
         if (null == data) {
-          // 跳转设备离线页面
+          return
         }
         // 赋值方法
         Page.airQuality = data.airQuality;
@@ -215,19 +197,19 @@
     var Page = new Vue({
       el: '#main',
       data: {
-        airQuality: '优',
-        standardPm2_5: '6',
-        atmosPm2_5: '156',
-        standardPm10: '7',
-        atmosPm10: '226',
-        formal: '优',
-        formalNum: '2',
-        tvoc: '良',
-        tvocNum: '34',
-        co2: '好',
-        co2Num: '12',
-        temperature: '23',
-        humidity: '45'
+        airQuality: '',
+        standardPm2_5: '',
+        atmosPm2_5: '',
+        standardPm10: '',
+        atmosPm10: '',
+        formal: '',
+        formalNum: '',
+        tvoc: '',
+        tvocNum: '',
+        co2: '',
+        co2Num: '',
+        temperature: '',
+        humidity: ''
       },
       mounted() {
         document.getElementsByTagName('body')[0].style.display = 'block';
