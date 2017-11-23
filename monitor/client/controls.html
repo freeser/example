@@ -105,17 +105,17 @@
                             <i class="iconfont icon-fengshan small zoomer"></i>
                             <span class="flex_1 span">
                                 <span class="range">
-                                    <span class="split flex">
+                                    <!-- <span class="split flex">
                                         <span class="flex_1"></span>
                                         <span class="flex_1"></span>
                                         <span class="flex_1"></span>
                                         <span class="flex_1"></span>
                                         <span class="flex_1"></span>
-                                    </span>
-                                    <i class="progress" :style="'width: '+ (custom.feng/5 * 100) +'%;'"></i>
+                                    </span> -->
+                                    <i class="progress" :style="'width: '+ (custom.feng/30 * 100) +'%;'"></i>
                                 </span>
-                                <input type="range" name="fengliang" min="1" max="5" step="1" v-model="custom.feng">
-                                <span class="label">{{custom.feng}}m³/h</span>
+                                <input type="range" name="fengliang" min="0" max="30" step="1" v-model="custom.feng">
+                                <span class="label">{{custom.feng}}</span>
                             </span>
                             <i class="iconfont icon-fengshan big zoomer"></i>
                         </dd>
