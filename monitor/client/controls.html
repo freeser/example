@@ -5,32 +5,10 @@
     <meta charset="UTF-8">
     <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
     <title>远程遥控</title>
-    <script>
-        (function () {
-            function o() {
-                document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ?
-                    414 : document.documentElement.clientWidth) * 13 / 375) + "px"
-            }
-            var e = null;
-            window.addEventListener("resize", function () {
-                clearTimeout(e), e = setTimeout(o, 100)
-            }, !1), o()
-        })(window);
-    </script>
+    <script src="js/fontsize.js"></script>
     <link rel="stylesheet" href="font/iconfont.css">
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
-    <style type="text/css">
-        .main footer button {
-            line-height: 3rem;
-            font-size: 1.3rem;
-        }
-
-        .main footer button.active {
-            background: #27C06D;
-        }
-    </style>
-
 </head>
 
 <body style="display:none;">
@@ -107,46 +85,164 @@
         </section>
         <footer class="flex">
             <button type="button" class="flex_1" :class="{'active': powerOn}" @click="powerManager">
-                <i class="iconfont icon-guanji"></i> {{ !powerOn ? "开机" : "关机"}}</button>
-            <button type="button">
-                <i class="iconfont icon-dingshi"></i> 定时关机</button>
+                <i class="iconfont icon-guanji"></i> {{ !powerOn ? "开机" : "关机"}}
+            </button>
+            <button type="button" class="hastime ohidden">
+                <i class="iconfont icon-dingshi"></i> 定时{{ !powerOn ? "开机" : "关机"}}
+                <input type="datetime-local" v-model="datetimepicker" @change="selectime">
+            </button>
         </footer>
+        <section style="height: 0;">
+            <div class="fixed top left bottom right h100vh dialog" @click.self="mask=false" v-if="mask">
+                <div class="dialog_content customModel fixed bottom left right">
+                    <div class="dialog_header flex">
+                        <button @click="selectCustom(-1)" :class="{'selected': customSelected == -1}">直接控制</button>
+                        <button v-for="(item, idx) in customlist" :key="idx" @click="selectCustom(idx)" :class="{'selected': customSelected == idx}">{{item.name}}</button>
+                    </div>
+                    <dl class="dialog_section">
+                        <dd class="flex acenter jcenter">
+                            <label>风量</label>
+                            <i class="iconfont icon-fengshan small zoomer"></i>
+                            <span class="flex_1 span">
+                                <span class="range">
+                                    <span class="split flex">
+                                        <span class="flex_1"></span>
+                                        <span class="flex_1"></span>
+                                        <span class="flex_1"></span>
+                                        <span class="flex_1"></span>
+                                        <span class="flex_1"></span>
+                                    </span>
+                                    <i class="progress" :style="'width: '+ (custom.feng/5 * 100) +'%;'"></i>
+                                </span>
+                                <input type="range" name="fengliang" min="1" max="5" step="1" v-model="custom.feng">
+                                <span class="label">{{custom.feng}}m³/h</span>
+                            </span>
+                            <i class="iconfont icon-fengshan big zoomer"></i>
+                        </dd>
+                        <dd class="flex acenter jcenter">
+                            <label>间隔</label>
+                            <i class="iconfont icon-shijian small"></i>
+                            <span class="flex_1 span">
+                                <span class="range">
+                                    <i class="progress" :style="'width: '+ (custom.jian/255 * 100) +'%;'"></i>
+                                </span>
+                                <input type="range" name="jiange" min="1" max="255" step="1" v-model="custom.jian">
+                                <span class="label">{{custom.jian}}min</span>
+                            </span>
+                            <i class="iconfont icon-shijian big"></i>
+                        </dd>
+                    </dl>
+                    <div class="dialog_footer tright" v-if="customlist.length < 4 || customSelected != -1">
+                        <button @click="addCustom">收藏</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
     <script src="https://img.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
     <script src="js/vue.min.js"></script>
     <script src="js/socket.io.js"></script>
+    <script src="js/debounce.js"></script>
+    <script src="js/prop.js"></script>
     <script>
-        var socket;
-        function initPage(deviceId) {
-            var Ctrl = new Vue({
+        var socket, timer, Ctrl;
+        var deviceId = getParam('deviceId');
+        function getParam(name, href) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(href || window.location.href);
+            return results ? results[1] : "";
+        }
+
+        function refresh() {
+            timer && clearTimeout(timer);
+            timer = window.setTimeout(refresh, 10000);
+            msgToSer('refresh');
+        }
+        initPage();
+
+        function initPage() {
+            Ctrl = new Vue({
                 el: '#controls',
                 data: {
+                    deviceId: deviceId,
                     windNum: '-',
                     heatingModel: 1,
                     windModel: 1,
-                    powerOn: false
+                    powerOn: false,
+                    custom: {
+                        feng: 2,
+                        jian: 8
+                    },
+                    mask: false,
+                    customlist: [],
+                    customSelected: -1,
+                    datetimepicker: '',
+                    formatDate: ''
                 },
                 mounted() {
+                    this.customlist = JSON.parse(localStorage.getItem('_cache_custom_') || '[]');
                     document.getElementsByTagName('body')[0].style.display = 'block';
                 },
                 methods: {
                     toggel: function (key) {
-                        msgToSer(deviceId, key);
+                        if (key == 'wind_manual') {
+                            this.mask = true;
+                        }
+                        msgToSer(key);
                     },
                     powerManager: function () {
-                        msgToSer(deviceId, 'power');
+                        msgToSer('power');
+                    },
+                    selectCustom: function (idx) {
+                        if (idx != -1) {
+                            var item = this.customlist[idx];
+                            this.custom = JSON.parse(JSON.stringify(item.key || this.custom));
+                        } else {
+                            this.custom = JSON.parse(JSON.stringify(this.custom));
+                        }
+                        this.customSelected = idx;
+                    },
+                    addCustom: function () {
+                        if (this.customSelected > -1) {
+                            var item = this.customlist[this.customSelected];
+                            item.key = this.custom;
+                            alert('更新 ' + item.name + ' 成功');
+                        } else if (this.customlist.length < 4) {
+                            var name = prompt('请输入一个名称', '收藏' + this.customlist.length);
+                            this.customlist.push({
+                                name: name,
+                                key: this.custom
+                            });
+                            this.customSelected = this.customlist.length - 1;
+                            alert('添加 '+ name +' 成功');
+                        }
+                        localStorage.setItem('_cache_custom_', JSON.stringify(this.customlist));
+                    },
+                    selectime: function () {
+                        this.formatDate = new Date(this.datetimepicker).Format('yyyy-MM-dd hh:mm')
+                        msgToSer(this.powerOn ? 'power_off_time' : 'power_on_time')
                     }
+                },
+                watch: {
+                    'custom.feng': debounce(200, false, function (v) {
+                        msgToSer('wind_level');
+                    }),
+                    'custom.jian': debounce(200, false, function (v) {
+                        msgToSer('wind_interval');
+                    })
                 }
             });
             socket = io.connect('http://www.windme.cn:3000/')
             socket.on('connect', function () {
                 log('连接成功：' + socket.id);
-                msgToSer(deviceId, 'refresh');
+                refresh();
             });
             //接收消息
             socket.on('clientMsg', function (data) {
                 console.log('clientMsg', data);
-                if (null == data) {
+                if ('null' == data || !data) {
                     return;
                 }
                 // 赋值方法
@@ -168,26 +264,18 @@
                 log('连接失败!');
             });
         }
-    </script>
-    <script>
-        var deviceId = getParam('deviceId');
-        function getParam(name, href) {
-            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-            var regexS = "[\\?&]" + name + "=([^&#]*)";
-            var regex = new RegExp(regexS);
-            var results = regex.exec(href || window.location.href);
-            return results ? results[1] : "";
-        }
-        initPage(deviceId);
-    </script>
-    <script>
-        function msgToSer(deviceId, command) {
+
+        function msgToSer(command) {
             var jsonObject = {
                 pageName: 'control',
                 deviceId: deviceId,
-                command: command
+                command: command,
+                level: Ctrl.custom.feng, // 风量等级
+                interval: Ctrl.custom.jian, // 运行间隔
+                time: Ctrl.formatDate // 预约时间（yyyy-MM-dd HH:mm）
             };
-            socket.emit('order', jsonObject)
+            
+            deviceId && socket.emit('order', jsonObject)
         }
 
         function log(message) {

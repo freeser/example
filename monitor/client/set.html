@@ -4,17 +4,7 @@
   <meta charset="UTF-8">
   <meta name=viewport content="width=device-width,height=device-height,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1">
   <title>设备配置</title>
-  <script>
-      (function () {
-          function o() {
-              document.documentElement.style.fontSize = parseInt((document.documentElement.clientWidth > 414 ? 414 : document.documentElement.clientWidth) * 13 / 375) + "px"
-          }
-          var e = null;
-          window.addEventListener("resize", function () {
-              clearTimeout(e), e = setTimeout(o, 100)
-          }, !1), o()
-      })(window);
-  </script>
+  <script src="js/fontsize.js"></script>
   <link rel="stylesheet" href="font/iconfont.css">
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/style.css">

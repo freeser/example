@@ -69,13 +69,16 @@
             }
             .icon-wifi{
                 position: absolute; top: 1rem;right: 1rem;
-                background: #168850;
+                background: #168850; color: #fff;
                 border-radius: 50%;
                 width: 3rem;
                 height: 3rem;
                 text-align: center;
                 line-height: 3rem;
                 font-size: 2rem;
+                &.disabled{
+                    opacity: .4;
+                }
             }
         }
         .stateonoff{
@@ -224,18 +227,33 @@
     }
     footer{
         padding: 1rem .5rem;
+        a[disabled] {
+            background: #ccc;
+        }
         button{
             background: #D0CDC7;
             border: 0;
             color: #fff;
             height: 3rem;
+            line-height: 3rem;
+            font-size: 1.3rem;
             border-radius: 4px;
             padding: 0 .7rem;
             &+button{
                 margin-left: .5rem;
             }
+            &.active {
+                background: #27C06D;
+            }
             .iconfont{
                 font-size: 1.5rem;
+            }
+        }
+        .hastime{
+            position: relative;
+            input{
+                position: absolute;
+                left: 0; top: 0; width: 100%; height: 100%; opacity: 0;
             }
         }
     }
@@ -274,5 +292,118 @@
     }
     button{
         height: 4rem; width: 100%; background: #27C06D;color:#fff; border:0;border-radius: 3px;
+    }
+}
+
+.dialog{
+    background: rgba(0, 0, 0, .4); z-index: 10000;
+    .dialog_content{
+        background: #fff;
+        padding: 1rem;
+        -webkit-box-sizing: border-box;
+                box-sizing: border-box;
+    }
+    .customModel{
+        padding: 1rem 2rem;
+        button{
+            border: 0; background: @main-color; color: #fff;
+            padding: .5rem 1rem; border-radius: 3px;
+            &+button{
+                margin-left: .5rem;
+            }
+        }
+        .dialog_header {
+            button{
+                background: #d7f5dc;
+                color: #333;
+                zoom: .6;
+            }
+            .selected{
+                background: #27C06D;
+            }
+        }
+        .dialog_section{
+            padding: 1rem 0;
+            .iconfont{
+                color: @main-color;
+            } 
+            .small{
+                font-size: 1.2rem;
+            }
+            .big{
+                font-size: 1.8rem;
+            }
+            .zoomer{
+                -webkit-transform: scale(1.5);
+                    -ms-transform: scale(1.5);
+                        transform: scale(1.5);
+            }
+            dd{
+                padding: 1rem 0;
+                label{
+                    padding-right: 2em;
+                }
+                .span{
+                    position: relative;
+                    margin: 0 1rem;
+                }
+                input[type="range"]{
+                    position: absolute; width: 100%;
+                    left: 0; top: 50%;
+                    -webkit-transform: translateY(-50%);
+                        -ms-transform: translateY(-50%);
+                            transform: translateY(-50%);
+                    opacity: 0; z-index: 5;
+                }
+                .range{
+                    position: relative;
+                    display: block; z-index: 1;
+                    height: .5rem;
+                    background: #ccc;
+                    border-radius: 1rem;
+                    .progress{
+                        position: absolute; left: 0; top: 0;
+                        height: 100%;
+                        border-radius: 1rem;
+                        background: @main-color;
+                        &:after{
+                            content: "";
+                            position: absolute;
+                            right: 0;
+                            top: 50%;
+                            -webkit-transform: translateY(-50%);
+                                -ms-transform: translateY(-50%);
+                                    transform: translateY(-50%);
+                            width: 1.6rem; height: 1.6rem;
+                            border-radius: 999px;
+                            background: @main-color;
+                            -webkit-box-shadow: 0 0 5px 0 @main-color;
+                                    box-shadow: 0 0 5px 0 @main-color;
+                        }
+                    }
+                }
+                .label{
+                    position: absolute; right: 0;
+                    bottom: -1.5em; color: #aaa;
+                }
+                .split{
+                    height: 100%;
+                    span{
+                        position: relative;
+                        &:after{
+                            content: "";
+                            position: absolute; right: 0;
+                            top: 50%;
+                            -webkit-transform: translateY(-50%);
+                                -ms-transform: translateY(-50%);
+                                    transform: translateY(-50%);
+                            width: 1.1rem; height: 1.1rem;
+                            border-radius: 999px;
+                            background: @main-color;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
