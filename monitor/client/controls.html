@@ -21,13 +21,14 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
     <style type="text/css">
-      .main footer button{
-        line-height: 3rem;
-        font-size: 1.3rem;
-      }
-      .main footer button.active{
-        background: #27C06D;
-      }
+        .main footer button {
+            line-height: 3rem;
+            font-size: 1.3rem;
+        }
+
+        .main footer button.active {
+            background: #27C06D;
+        }
     </style>
 
 </head>
@@ -42,7 +43,7 @@
                         <div>
                             <div>风量</div>
                             <div class="big20">{{windNum}}</div>
-                            <div>M/h</div>
+                            <div>m³/h</div>
                         </div>
                     </div>
                 </div>
@@ -70,17 +71,17 @@
                     <label class="flex_1">辅热模式</label>
                     <label class="tcenter flex_1">
                         <input type="radio" v-model="heatingModel" value="1">
-                        <span class="icons close-smart" @click="toggel('HeatingAuto')"></span>
+                        <span class="icons close-smart" @click="toggel('heating_auto')"></span>
                         <span>智能模式</span>
                     </label>
                     <label class="tcenter flex_1">
                         <input type="radio" v-model="heatingModel" value="2">
-                        <span class="icons open" @click="toggel('HeatingOn')"></span>
+                        <span class="icons open" @click="toggel('heating_on')"></span>
                         <span>常开</span>
                     </label>
                     <label class="tcenter flex_1">
                         <input type="radio" v-model="heatingModel" value="3">
-                        <span class="icons close" @click="toggel('HeatingOff')"></span>
+                        <span class="icons close" @click="toggel('heating_off')"></span>
                         <span>常关</span>
                     </label>
                 </dd>
@@ -88,25 +89,25 @@
                     <label class="flex_1">风机模式</label>
                     <label class="tcenter flex_1">
                         <input type="radio" v-model="windModel" value="1">
-                        <span class="icons open-smart" @click="toggel('WindAuto')"></span>
+                        <span class="icons open-smart" @click="toggel('wind_auto')"></span>
                         <span>智能模式</span>
                     </label>
                     <label class="tcenter flex_1">
                         <input type="radio" v-model="windModel" value="2">
-                        <span class="icons handle" @click="toggel('WindManual')"></span>
+                        <span class="icons handle" @click="toggel('wind_manual')"></span>
                         <span>手动模式</span>
                     </label>
                     <label class="tcenter flex_1">
                         <input type="radio" v-model="windModel" value="3">
-                        <span class="icons sleep" @click="toggel('Sleep')"></span>
+                        <span class="icons sleep" @click="toggel('sleep')"></span>
                         <span>睡眠模式</span>
                     </label>
                 </dd>
             </dl>
         </section>
         <footer class="flex">
-            <button type="button" class="flex_1" :class="{'active': poweron}" @click="powerManager">
-                <i class="iconfont icon-guanji"></i> {{ !poweron ? "开机" : "关机"}}</button>
+            <button type="button" class="flex_1" :class="{'active': powerOn}" @click="powerManager">
+                <i class="iconfont icon-guanji"></i> {{ !powerOn ? "开机" : "关机"}}</button>
             <button type="button">
                 <i class="iconfont icon-dingshi"></i> 定时关机</button>
         </footer>
@@ -115,44 +116,44 @@
     <script src="js/vue.min.js"></script>
     <script src="js/socket.io.js"></script>
     <script>
+        var socket;
         function initPage(deviceId) {
             var Ctrl = new Vue({
                 el: '#controls',
                 data: {
                     windNum: '-',
-                    heatingModel: 2,
-                    windModel: 3,
-                    poweron: false
+                    heatingModel: 1,
+                    windModel: 1,
+                    powerOn: false
                 },
                 mounted() {
                     document.getElementsByTagName('body')[0].style.display = 'block';
                 },
                 methods: {
                     toggel: function (key) {
-                        this[key] = !this[key] //可以通过socket.io回传改变值
-                        socket.emit('order', 'key_' + this[key] + '_' + deviceId)
+                        msgToSer(deviceId, key);
                     },
-                    powerManager: function(){
-                        this.poweron =! this.poweron
+                    powerManager: function () {
+                        msgToSer(deviceId, 'power');
                     }
                 }
             });
-            var socket = io.connect('http://api.windme.cn:3000/')
+            socket = io.connect('http://www.windme.cn:3000/')
             socket.on('connect', function () {
                 log('连接成功：' + socket.id);
-                socket.emit('order', 'key_status_' + deviceId)
+                msgToSer(deviceId, 'refresh');
             });
             //接收消息
             socket.on('clientMsg', function (data) {
                 console.log('clientMsg', data);
                 if (null == data) {
-                    // 跳转设备离线页面
                     return;
                 }
                 // 赋值方法
                 Ctrl.windNum = data.windNum;
                 Ctrl.heatingModel = data.heatingModel;
                 Ctrl.windModel = data.windModel;
+                Ctrl.powerOn = data.powerOn == 'true' ? true : false;
             });
             //断开连接（系统方法disconnct不可更改为其它）
             socket.on('disconnect', function () {
@@ -169,21 +170,7 @@
         }
     </script>
     <script>
-        var code = getParam('code');
-        var openid = sessionStorage.getItem('_openid_') || getParam('openid') || '';
-        if (!openid && code) {
-            $.get('http://www.windme.cn:8090/system/wx/openid/get', {
-                code: code
-            }).done(function (data) {
-                sessionStorage.setItem('_openid_', openid = data.openid);
-                openid ? getDeviceId() : initPage();
-            })
-        } else if (!openid && !code) {
-            initPage();
-        } else if (openid) {
-            getDeviceId();
-        }
-
+        var deviceId = getParam('deviceId');
         function getParam(name, href) {
             name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
             var regexS = "[\\?&]" + name + "=([^&#]*)";
@@ -191,21 +178,18 @@
             var results = regex.exec(href || window.location.href);
             return results ? results[1] : "";
         }
-
-        function getDeviceId() {
-            $.post('http://www.windme.cn:8090/device/query', {
-                openid: openid
-            }).done(function (data) {
-                initPage(data.deviceId)
-            })
-        }
+        initPage(deviceId);
     </script>
     <script>
-        //var socket = io();
+        function msgToSer(deviceId, command) {
+            var jsonObject = {
+                pageName: 'control',
+                deviceId: deviceId,
+                command: command
+            };
+            socket.emit('order', jsonObject)
+        }
 
-        //   function msgToSer (msg) {
-        //       socket.emit('order', msg)
-        //   }
         function log(message) {
             console.log('message', message);
         }
