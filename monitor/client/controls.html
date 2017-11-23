@@ -25,7 +25,7 @@
                         </div>
                     </div>
                 </div>
-                <i class="iconfont icon-wifi"></i>
+                <a :href="deviceId ? '#' : 'wifi.html'" class="iconfont icon-wifi" :class="{'disabled': !deviceId}"></a>
             </div>
             <div class="stateonoff flex">
                 <div class="flex_1 flex acenter jcenter item">
