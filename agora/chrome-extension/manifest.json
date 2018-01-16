@@ -13,7 +13,7 @@
    },
    "description": "Extension to allow screen sharing in Agora Web Application.",
    "externally_connectable": {
-      "matches": ["*://localhost:*/*", "*://develop.ebaiyihui.com/*", "*://www.ebaiyihui.com/*"]
+      "matches": ["*://localhost:*/*", "*://19890203.com/*", "*://develop.ebaiyihui.com/*", "*://www.ebaiyihui.com/*"]
     
    },
    "icons": {
