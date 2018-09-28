@@ -3,7 +3,7 @@
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>比特币交易深度图</title>
+		<title>交易深度图-hightcharts</title>
 		<style>
 			body,
 			html {
@@ -15,7 +15,6 @@
 
 	<body>
 		<div id="container" style="width: 100vw; height: 100vh"></div>
-		<script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 		<script src="//cdn.hcharts.cn/highcharts/highcharts.js"></script>
 		<script>
@@ -44,16 +43,6 @@
 					updateChat(d);
 				})
 			})
-			// $.get('/klinepush/getBuySellDepth?symbols=BCB/USDX').then(function (d) {  
-			// 	console.log('d', JSON.parse(d))
-			// })
-			// const query = `?symbols=${this.symbol}&locale=${this.locale == 'zh' ? 'zh_CN' : this.locale}`
-			// $http({
-			//   url: `klinepush/getCoinIntroduce${query}`, // 获取币种详情
-			//   success: d => {
-			//     this.coininfo = d.data
-			//   }
-			// })
 			function updateChat(deepth) {
 				var buylist = deepth.bidList;
 				var selllist = deepth.askList;
@@ -138,13 +127,13 @@
 						opposite: true, // 设置Y轴到右侧
 						labels: {
 							formatter: function () {
-								if (this.value > 1e12) {
+								if (this.value >= 1e12) {
 									return this.value / 1e12 + 'T';
-								} else if (this.value > 1e9) {
+								} else if (this.value >= 1e9) {
 									return this.value / 1e9 + 'G';
-								} else if (this.value > 1e6) {
+								} else if (this.value >= 1e6) {
 									return this.value / 1e6 + 'M';
-								} else if (this.value > 1e3) {
+								} else if (this.value >= 1e3) {
 									return this.value / 1e3 + 'K';
 								} else {
 									return this.value

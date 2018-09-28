@@ -3,7 +3,7 @@
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>比特币交易深度图</title>
+		<title>交易深度图-g2</title>
 		<style>
 			body,
 			html {
@@ -15,7 +15,6 @@
 
 	<body>
 		<div id="container" style="width: 100vw; height: 100vh"></div>
-		<script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 		<!-- 引入在线资源 -->
 		<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.2.8/dist/g2.min.js"></script>
@@ -110,13 +109,13 @@
 					grid: null,
 					label: {
 						formatter: val => {
-							if (val > 1e12) {
+							if (val >= 1e12) {
 								return val / 1e12 + 'T';
-							} else if (val > 1e9) {
+							} else if (val >= 1e9) {
 								return val / 1e9 + 'G';
-							} else if (val > 1e6) {
+							} else if (val >= 1e6) {
 								return val / 1e6 + 'M';
-							} else if (val > 1e3) {
+							} else if (val >= 1e3) {
 								return val / 1e3 + 'K';
 							} else {
 								return val

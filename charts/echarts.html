@@ -3,7 +3,7 @@
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>比特币交易深度图</title>
+		<title>交易深度图-echarts</title>
 		<style>
 			body,
 			html {
@@ -45,11 +45,62 @@
 				})
 			})
 
+			function updateChat(deepth) {
+				var buylist = deepth.bidList;
+				var selllist = deepth.askList;
+				var total = buylist.length + selllist.length;
+				var price = new Array(total);
+				var amount = new Array(total);
+
+				for (var i = 0, j = buylist.length, ii = j - 1; ii >= 0; i++, ii--) {
+					price[i] = buylist[ii]['price']
+					amount[i] = buylist[ii]['amountAll']
+				}
+
+				for (var i = 0, _i = buylist.length, j = selllist.length; i < j; i++) {
+					price[i + _i] = selllist[i]['price']
+					amount[i + _i] = selllist[i]['amountAll']
+				}
+				// console.log('price:', price, 'amount:', amount, 'amountsell:', amountsell);
+
+				chart.setOption({
+					xAxis: {
+						data: price
+					},
+					visualMap: {
+						show: !1,
+						dimension: 0,
+						pieces: [{
+							lte: buylist.length - 1,
+							color: "#294040"
+						}, {
+							gt: buylist.length,
+							lte: price.length,
+							color: "#36243B"
+						}]
+					},
+					series: [{
+						data: amount,
+						type: "line",
+						areaStyle: {},
+						itemStyle: {
+							normal: {
+								lineStyle: {
+									width: 0
+								}
+							}
+						},
+						symbol: 'circle',
+						showSymbol: !1
+					}]
+				});
+			}
+			
 			function initChat() {
 				var div = document.getElementById('container')
 				chart = echarts.init(div)
 				chart.setOption({
-					backgroundColor: '#101823', // 设置图表的背景色
+					backgroundColor: '#1A2231', // 设置图表的背景色
 					tooltip: {
 						padding: 8,
 						trigger: "axis",
@@ -61,7 +112,7 @@
 								opacity: 0.5
 							}
 						},
-						formatter: '<div class="innertooltip">成交价:{b}<br/>交易数量 : {c}</div>'
+						formatter: '<table class="innertooltip" style="color: #fff"><tr><td>委托价</td><td style="text-align: right"><b>{b}</b></td></tr><tr><td>交易数量</td><td style="text-align: right"><b>{c}</b></td></tr></table>'
 					},
 					axisPointer: {
 						type: "cross",
@@ -109,13 +160,13 @@
 						axisLabel: {
 							color: '#485B73',
 							formatter: function (val, t) {
-								if (val > 1e12) {
+								if (val >= 1e12) {
 									return val / 1e12 + 'T';
-								} else if (val > 1e9) {
+								} else if (val >= 1e9) {
 									return val / 1e9 + 'G';
-								} else if (val > 1e6) {
+								} else if (val >= 1e6) {
 									return val / 1e6 + 'M';
-								} else if (val > 1e3) {
+								} else if (val >= 1e3) {
 									return val / 1e3 + 'K';
 								} else {
 									return val
@@ -124,79 +175,19 @@
 						}
 					},
 					grid: [{
-						left: 20,
+						left: 30,
 						top: 20,
-						right: 70,
-						bottom: 60
+						right: 50,
+						bottom: 30
 					}]
 				});
 				chart.on('globalout', function (e) {
-					document.querySelector('.innertooltip').parentElement.style.display = 'none'
+            let tooltip = document.querySelector('.innertooltip')
+						tooltip && (tooltip.parentElement.style.display = 'none')
 				})
-				// chart.resize();
-				chart.dispatchAction({
-						type: 'highlight',
-						seriesIndex: 0,
-						dataIndex: 1
-				});
-				// 显示 tooltip
-				chart.dispatchAction({
-						type: 'showTip',
-						seriesIndex: 0,
-						dataIndex: 1
-				});
+        window.onresize = chart.resize
 			}
 
-			function updateChat(deepth) {
-				var buylist = deepth.bidList;
-				var selllist = deepth.askList;
-				var total = buylist.length + selllist.length;
-				var price = new Array(total);
-				var amount = new Array(total);
-
-				for (var i = 0, j = buylist.length, ii = j - 1; ii >= 0; i++, ii--) {
-					price[i] = buylist[ii]['price']
-					amount[i] = buylist[ii]['amountAll']
-				}
-
-				for (var i = 0, _i = buylist.length, j = selllist.length; i < j; i++) {
-					price[i + _i] = selllist[i]['price']
-					amount[i + _i] = selllist[i]['amountAll']
-				}
-				// console.log('price:', price, 'amount:', amount, 'amountsell:', amountsell);
-
-				chart.setOption({
-					xAxis: {
-						data: price
-					},
-					visualMap: {
-						show: !1,
-						dimension: 0,
-						pieces: [{
-							lte: buylist.length - 1,
-							color: "rgba(0, 214, 126, 0.2)"
-						}, {
-							gt: buylist.length,
-							lte: price.length,
-							color: "rgba(255, 79, 79, 0.2)"
-						}]
-					},
-					series: [{
-						data: amount,
-						type: "line",
-						areaStyle: {},
-						itemStyle: {
-							normal: {
-								lineStyle: {
-									width: 0
-								}
-							}
-						},
-						symbol: 'circle',
-						showSymbol: !1
-					}]
-				});
-			}
 		</script>
 	</body>
 
