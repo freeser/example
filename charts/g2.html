@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>比特币交易深度图</title>
+		<style>
+			body,
+			html {
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="container" style="width: 100vw; height: 100vh"></div>
+		<script src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+		<!-- 引入在线资源 -->
+		<script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.2.8/dist/g2.min.js"></script>
+		<script>
+			var chart;
+			var socket = io.connect('https://hq.6x.com');
+			var symbol = getParam('symbol')
+			var isactive = true;
+			var lastpoint = null;
+			window.onload = initChat;
+
+			function getParam(name, href) {
+				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(href || window.location.href);
+				return results ? results[1] : "";
+			}
+			symbol && socket.on('connect', () => {
+				// 加入深度图房间
+				// console.log('connected', symbol);
+				socket.emit('apprequest', {
+					symbols: symbol,
+					msgType: 'reqAppMsgSubscribe',
+					roomType: 'depthList'
+				})
+				socket.on('depth', d => {
+					// console.log('d.data', d);
+					chart && isactive && updateChat(d);
+				})
+			})
+
+			function updateChat(deepth) {
+				var buylist = deepth.bidList;
+				var selllist = deepth.askList;
+				var newArr = []
+				newArr = [].concat(buylist.reverse()).concat(selllist)
+				// console.log('newArr:', newArr);
+
+				chart.guide().regionFilter({
+					top: true,
+					start: newArr[0],
+					end: {
+						price: buylist[buylist.length - 1].price,
+						amountAll: 0
+					},
+					color: '#294040',
+					apply: ['area']
+				});
+				chart.guide().regionFilter({
+					top: true,
+					start: {
+						price: selllist[0].price,
+						amountAll: 0
+					},
+					end: newArr.slice(-1)[0],
+					color: '#36243B',
+					apply: ['area']
+				});
+				chart.changeData(newArr);
+				lastpoint && chart.showTooltip(lastpoint)
+			}
+
+			function initChat() {
+				bindeve();
+				chart = new G2.Chart({
+					container: 'container',
+					forceFit: true,
+					height: window.innerHeight,
+					padding: [10, 80, 80, 10],
+					background: {
+						fill: '#1A2231'
+					}
+				});
+
+				chart.source([], {
+					'price': {
+						alias: '委托价',
+						nice: false // 默认为 true，用于优化数值范围，使绘制的坐标轴刻度线均匀分布。例如原始数据的范围为 [3, 97]，如果 nice 为 true，那么就会将数值范围调整为 [0, 100]
+					},
+					'amountAll': {
+						alias: '累计',
+						nice: false
+					}
+				})
+				chart.axis('amountAll', {
+					title: null,
+					position: 'right',
+					line: {
+						lineWidth: 0 // 设置线的宽度
+					},
+					grid: null,
+					label: {
+						formatter: val => {
+							if (val > 1e12) {
+								return val / 1e12 + 'T';
+							} else if (val > 1e9) {
+								return val / 1e9 + 'G';
+							} else if (val > 1e6) {
+								return val / 1e6 + 'M';
+							} else if (val > 1e3) {
+								return val / 1e3 + 'K';
+							} else {
+								return val
+							}
+						}
+					}
+				});
+				chart.axis('price', {
+					title: null,
+					line: {
+						stroke: '#252D3C', // 坐标轴线的颜色
+						strokeOpacity: 1, // 坐标轴线的透明度，数值范围为 0 - 1
+						lineWidth: 1 // 设置坐标轴线的粗细
+					},
+					label: {
+						textStyle: {
+							fill: '#485B73', // 文本的颜色
+							fontSize: '12'
+						}
+					},
+					tickLine: {
+						lineWidth: 2, // 刻度线宽
+						stroke: '#252D3C', // 刻度线的颜色
+						strokeOpacity: 1, // 刻度线颜色的透明度
+						length: 5 // 刻度线的长度，可以为负值（表示反方向渲染）
+					}
+				});
+				chart.tooltip({
+					triggerOn: 'none',
+					showTitle: false,
+					crosshairs: {
+						type: 'cross',
+						style: {
+							stroke: '#485B73',
+							lineDash: [2, 3]
+						}
+					}
+				});
+				chart.on('mousemove', ev => {
+					lastpoint = { x: ev.x, y: ev.y }
+					chart.showTooltip(lastpoint)
+				});
+				chart.on('mouseleave', ev => { chart.hideTooltip() });
+				chart.on('tooltip:hide', ev => {
+					lastpoint = null
+				});
+				chart.area().position('price*amountAll').color('#1A2231').tooltip('price*amountAll');
+				chart.render()
+				
+			}
+
+			function bindeve() {
+				var hidden = "hidden";
+
+				//各个浏览器属性兼容
+				if (hidden in document)
+					document.addEventListener("visibilitychange", onchange);
+				else if ((hidden = "mozHidden") in document)
+					document.addEventListener("mozvisibilitychange", onchange);
+				else if ((hidden = "webkitHidden") in document)
+					document.addEventListener("webkitvisibilitychange", onchange);
+				else if ((hidden = "msHidden") in document)
+					document.addEventListener("msvisibilitychange", onchange);
+				else if ("onfocusin" in document)
+					document.onfocusin = document.onfocusout = onchange;
+				else
+					window.onpageshow = window.onpagehide = window.onfocus = window.onblur = onchange;
+
+				//主要功能代码
+				//网页状态改变事件
+				function onchange(evt) {
+					isactive = !document[hidden]
+				}
+			}
+		</script>
+	</body>
+
+</html>
