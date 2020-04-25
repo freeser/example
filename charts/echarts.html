@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>交易深度图-echarts</title>
+		<style>
+			body,
+			html {
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="container" style="width: 100vw; height: 100vh"></div>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts.min.js"></script>
+		<script>
+			var chart;
+			var socket = io.connect('https://hq.6x.com');
+			var symbol = getParam('symbol')
+
+			window.onload = initChat;
+
+			function getParam(name, href) {
+				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(href || window.location.href);
+				return results ? results[1] : "";
+			}
+			symbol && socket.on('connect', () => {
+				// 加入深度图房间
+				// console.log('connected', symbol);
+				socket.emit('apprequest', {
+					symbols: symbol,
+					msgType: 'reqAppMsgSubscribe',
+					roomType: 'depthList'
+				})
+				socket.on('depth', d => {
+					// console.log('d.data', d);
+					updateChat(d);
+				})
+			})
+
+			function updateChat(deepth) {
+				var buylist = deepth.bidList;
+				var selllist = deepth.askList;
+				var total = buylist.length + selllist.length;
+				var price = new Array(total);
+				var amount = new Array(total);
+
+				for (var i = 0, j = buylist.length, ii = j - 1; ii >= 0; i++, ii--) {
+					price[i] = buylist[ii]['price']
+					amount[i] = buylist[ii]['amountAll']
+				}
+
+				for (var i = 0, _i = buylist.length, j = selllist.length; i < j; i++) {
+					price[i + _i] = selllist[i]['price']
+					amount[i + _i] = selllist[i]['amountAll']
+				}
+				// console.log('price:', price, 'amount:', amount, 'amountsell:', amountsell);
+
+				chart.setOption({
+					xAxis: {
+						data: price
+					},
+					visualMap: {
+						show: !1,
+						dimension: 0,
+						pieces: [{
+							lte: buylist.length - 1,
+							color: "#294040"
+						}, {
+							gt: buylist.length,
+							lte: price.length,
+							color: "#36243B"
+						}]
+					},
+					series: [{
+						data: amount,
+						type: "line",
+						areaStyle: {},
+						itemStyle: {
+							normal: {
+								lineStyle: {
+									width: 0
+								}
+							}
+						},
+						symbol: 'circle',
+						showSymbol: !1
+					}]
+				});
+			}
+			
+			function initChat() {
+				var div = document.getElementById('container')
+				chart = echarts.init(div)
+				chart.setOption({
+					backgroundColor: '#1A2231', // 设置图表的背景色
+					tooltip: {
+						padding: 8,
+						trigger: "axis",
+						alwaysShowContent: true,
+						axisPointer: {
+							type: "cross",
+							crossStyle: {
+								type: 'dashed',
+								opacity: 0.5
+							}
+						},
+						formatter: '<table class="innertooltip" style="color: #fff"><tr><td>委托价</td><td style="text-align: right"><b>{b}</b></td></tr><tr><td>交易数量</td><td style="text-align: right"><b>{c}</b></td></tr></table>'
+					},
+					axisPointer: {
+						type: "cross",
+						snap: true,
+						lineStyle: {
+							type: 'dashed',
+							opacity: 0.5
+						}
+					},
+					toolbox: null,
+					xAxis: {
+						type: "category",
+						splitLine: {
+							show: !1
+						},
+						axisTick: {
+							lineStyle: {
+								color: "#252D3C",
+								width: 1
+							}
+						},
+						boundaryGap: !1,
+						axisLine: {
+							lineStyle: {
+								color: "#252D3C",
+								width: 1
+							}
+						},
+						axisLabel: {
+							color: '#485B73',
+							interval: 2
+						}
+					},
+					yAxis: {
+						splitLine: {
+							show: !1
+						},
+						position: "right",
+						axisLine: {
+							show: !1
+						},
+						axisTick: {
+							show: !1
+						},
+						axisLabel: {
+							color: '#485B73',
+							formatter: function (val, t) {
+								if (val >= 1e12) {
+									return val / 1e12 + 'T';
+								} else if (val >= 1e9) {
+									return val / 1e9 + 'G';
+								} else if (val >= 1e6) {
+									return val / 1e6 + 'M';
+								} else if (val >= 1e3) {
+									return val / 1e3 + 'K';
+								} else {
+									return val
+								}
+							}
+						}
+					},
+					grid: [{
+						left: 30,
+						top: 20,
+						right: 50,
+						bottom: 30
+					}]
+				});
+				chart.on('globalout', function (e) {
+            let tooltip = document.querySelector('.innertooltip')
+						tooltip && (tooltip.parentElement.style.display = 'none')
+				})
+        window.onresize = chart.resize
+			}
+
+		</script>
+	</body>
+
+</html>

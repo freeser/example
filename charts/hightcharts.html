@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>交易深度图-hightcharts</title>
+		<style>
+			body,
+			html {
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="container" style="width: 100vw; height: 100vh"></div>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+		<script src="//cdn.hcharts.cn/highcharts/highcharts.js"></script>
+		<script>
+			var chart;
+			var socket = io.connect('https://hq.6x.com');
+			var symbol = getParam('symbol')
+			window.onload = initChat;
+
+			function getParam(name, href) {
+				name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+				var regexS = "[\\?&]" + name + "=([^&#]*)";
+				var regex = new RegExp(regexS);
+				var results = regex.exec(href || window.location.href);
+				return results ? results[1] : "";
+			}
+			symbol && socket.on('connect', () => {
+				// 加入深度图房间
+				// console.log('connected', symbol);
+				socket.emit('apprequest', {
+					symbols: symbol,
+					msgType: 'reqAppMsgSubscribe',
+					roomType: 'depthList'
+				})
+				socket.on('depth', d => {
+					// console.log('d.data', d);
+					updateChat(d);
+				})
+			})
+			function updateChat(deepth) {
+				var buylist = deepth.bidList;
+				var selllist = deepth.askList;
+				var total = buylist.length + selllist.length;
+				var price = new Array(total);
+				var amount = new Array(total);
+
+				for (var i = 0, j = buylist.length, ii = j - 1; ii >= 0; i++, ii--) {
+					price[i] = buylist[ii]['price']
+					amount[i] = buylist[ii]['amountAll']
+				}
+
+				for (var i = 0, _i = buylist.length, j = selllist.length; i < j; i++) {
+					price[i + _i] = selllist[i]['price']
+					amount[i + _i] = selllist[i]['amountAll']
+				}
+				// console.log('price:', price, 'amount:', amount, 'amountsell:', amountsell);
+				chart.update({
+					series: [{
+							name: '累计',
+							data: amount,
+							zoneAxis: 'x',
+							zones: [
+								{
+									value: buylist[0]['price'],
+									color: '#294040'
+								},
+								{
+									color: '#36243B'
+								}
+							]
+						}
+					],
+					xAxis: {
+						categories: price
+					}
+				});
+			}
+
+			function initChat() {
+				chart = Highcharts.chart('container', {
+					exporting: false, // 是否显示导出功能
+					credits: {
+						enabled: false // 是否显示版权信息
+					},
+					legend: false, // 是否显示图例
+					// colors: ['#294040', '#36243B'], // 设置图表两个面积图颜色
+					chart: {
+						type: 'area', // 设置图表为面积图
+						backgroundColor: '#101823' // 设置图表的背景色
+					},
+					plotOptions: {
+						series: {
+							lineWidth: 0, // 设置图表内数据线的宽度
+							marker: {
+								radius: 0, // 设置图表内数据线上的圆点大小
+								symbol: 'circle'
+							}
+						}
+					},
+					title: {
+						text: ''
+					},
+					xAxis: {
+						allowDecimals: true, // 是否在坐标轴标签中显示小数。当图表展示的数据和整数相关时，例如页面的访问量、访问人数等，坐标轴标签是不能显示整数的。 默认是：true.
+						lineColor: '#252D3C', // 设置X轴颜色
+						tickColor: '#252D3C', // 设置X轴分隔线颜色
+						categories: [],
+						labels: {
+							style: {
+								color: '#485B73' // 设置X坐标轴文字样式
+							},
+							step: 6 // 设置X坐标轴文字间隔多少显示
+						}
+					},
+					yAxis: {
+						title: {
+							text: ''
+						},
+						// 设置图表Y轴分隔线
+						gridLineWidth: 0,
+						opposite: true, // 设置Y轴到右侧
+						labels: {
+							formatter: function () {
+								if (this.value >= 1e12) {
+									return this.value / 1e12 + 'T';
+								} else if (this.value >= 1e9) {
+									return this.value / 1e9 + 'G';
+								} else if (this.value >= 1e6) {
+									return this.value / 1e6 + 'M';
+								} else if (this.value >= 1e3) {
+									return this.value / 1e3 + 'K';
+								} else {
+									return this.value
+								}
+							},
+							style: {
+								color: '#485B73' // 设置Y坐标轴文字样式
+							}
+						}
+					},
+					// 设置图表内浮动提示样式
+					tooltip: {
+						useHTML: true,
+						backgroundColor: '#262A42',
+						borderColor: '#262A42',
+						headerFormat: '<table style="color: #fff"><tr><td>委托价</td><td style="text-align: right"><b>{point.key}</b></td></tr>',
+						pointFormat: '<tr><td>{series.name}</td>' +
+							'<td style="text-align: right"><b>{point.y}</b></td></tr>',
+						footerFormat: '</table>',
+						// valueDecimals: 2
+					},
+					series: [{
+							name: '累计',
+							data: []
+						}
+					]
+				});
+			}
+		</script>
+	</body>
+
+</html>
