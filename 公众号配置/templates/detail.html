@@ -7,7 +7,8 @@
     <style>
         *{
             margin: 0;
-            padding: 0
+            padding: 0;
+            font-family: '\5FAE\8F6F\96C5\9ED1','\5B8B\4F53',Arial,Helvetica,sans-serif;
         }
         html, body{
             background: #EFECF0;;
@@ -19,7 +20,7 @@
         .h1{
             text-align: center;
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 18px;
             color: #111;
         }
         .title{
@@ -27,29 +28,30 @@
             align-items: center;
             border-bottom: 10px solid #EFECF0;
             padding: 10px 20px;
+            font-size: 18px;
         }
         .title .img{
             height: 80px;
             margin-right: 20px;
         }
         .title .names .sex{
-            font-size: 12px;
+            font-size: 15px;
             margin-left: 10px;
         }
         .title .names .birth{
             margin-top: 8px;
-            font-size: 12px;
+            font-size: 15px;
         }
         dd{
             border-bottom: 1px solid #EFECF0;
             display: flex;
             align-items: center;
-            padding: 10px 20px;
-            font-size: 12px;
+            padding: 15px 20px;
+            font-size: 15px;
         }
         dd label{
             color: #A5A5A5;
-            width: 100px;
+            width: 130px;
         }
         dd span{
             color: #434144;
@@ -66,10 +68,10 @@
         .header .lan{
             background: #E7E7E7;
             color: #858585;
-            font-size: 12px;
+            font-size: 15px;
             height: 24px;
             line-height: 24px;
-            border-radius: 12px;
+            border-radius: 15px;
             padding-right: 10px;
         }
         .header .lan .selected{
@@ -77,9 +79,10 @@
             color: #fff;
             display: inline-block;
             padding: 0 10px;
-            border-radius: 12px;
+            border-radius: 15px;
         }
-        dialog{
+        .dialog{
+            display: none;
             position: absolute;
             top: 64px;
             right: 20px;
@@ -88,11 +91,13 @@
             border: 0;
             box-shadow: 0 0 8px 0 #999;
             padding: 20px;
-            font-size: 12px;
+            font-size: 15px;
             color: #444;
             line-height: 1.6;
+            z-index: 10;
+            background-color: #fff;
         }
-        dialog a{
+        .dialog a{
             color: #316B9C;
             text-decoration: none;
             outline: none;
@@ -100,15 +105,15 @@
     </style>
 </head>
 <body>
-    <dialog>
-        <p>该报告尚无对应的英文版，您可登录 <a href="/">学信档案</a>进行申请</p>
+    <div class="dialog" id="dialog">
+        <p>该报告尚无对应的英文版，您可登录 <a href="javascript:;">学信档案</a>进行申请</p>
         <p style="text-align: right; margin-top: 10px">
-            <span onclick="document.getElementsByTagName('dialog')[0].close()">关闭</span>
+            <span onclick="document.getElementById('dialog').style.display='none'">关闭</span>
         </p>
-    </dialog>
+    </div>
     <div class="h5">
         <div class="header">
-            <div class="lan" onclick="document.getElementsByTagName('dialog')[0].show()">
+            <div class="lan" onclick="document.getElementById('dialog').style.display='block'">
                 <span class="selected">中文</span>
                 <span>英文</span>
             </div>
@@ -165,10 +170,6 @@
                 <span>专科</span>
             </dd>
             <dd style="border-bottom-width: 10px;">
-                <label>校(院)长姓名</label>
-                <span>李大勇</span>
-            </dd>
-            <dd>
                 <label>在线验证码</label>
                 <span>AGWXNW3V2U86FNV9</span>
             </dd>
