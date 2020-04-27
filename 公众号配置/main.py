@@ -21,22 +21,20 @@ class scan:
         oparam = WxjdkParmas(url)
         param = oparam.signutareEncryption()
         print("get-param%s"%param)
-        return render.scan(param)
+        return param
 
 class detail:
     def GET(self):
         return render.detail()
 
-# class static:
-#     def GET(self, media, file):
-#         try:
-#             url = media + '/' + file
-#             print("get-url：%s"%web.ctx.fullpath)
-#             # WxjdkParmas(url)
-#             f = open(url, 'r')
-#             return f.read()
-#         except:
-#             return '' # you can send an 404 error here if you want
+class static:
+    def GET(self, media, file):
+        try:
+            url = media + '/' + file
+            f = open(url, 'r')
+            return f.read()
+        except:
+            return '' # you can send an 404 error here if you want
 
 if __name__ == '__main__':
     app.run()

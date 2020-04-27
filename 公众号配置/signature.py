@@ -5,6 +5,23 @@ import hashlib
 import random
 import string
 
+import os
+import django
+
+# 1、 永久添加环境变量(影响当前用户)
+# #vim ~/.bashrc
+# export PATH=/opt/STM/STLinux-2.3/devkit/sh4/bin:$PATH
+
+# 2、永久添加环境变量(影响所有用户)
+# #vim /etc/profile
+# 在文档最后，添加:
+# export DJANGO_SETTINGS_MODULE=settings
+# 保存，退出，然后运行：
+# #source /etc/profile
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+django.setup()
+
 class WxjdkParmas(object):
 
     ''' 1, 此处官方文档明确提到用户需要缓存jsapi_ticket因为其api调用次数非常有限,根据文档说明我把获取基础支持的acess_token和ticket写到了一起
@@ -51,8 +68,6 @@ class WxjdkParmas(object):
     def __get_ticket(self):
         '''获取tickey'''
 
-        print("__get_ticket%s"%cache.has_key('ticket'))
-        print("__get_ticketaccess_token%s"%cache.has_key('access_token'))
         try:
             key = 'ticket'
             if cache.has_key(key):
