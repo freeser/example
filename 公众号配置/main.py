@@ -16,7 +16,7 @@ app = web.application(urls, globals())
 
 class scan:
     def GET(self):
-        url = web.ctx.home + web.ctx.fullpath
+        url = web.input().url
         print("get-url：%s"%url)
         oparam = WxjdkParmas(url)
         param = oparam.signutareEncryption()
