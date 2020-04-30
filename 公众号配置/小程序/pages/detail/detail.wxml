@@ -1,0 +1,78 @@
+<view class="body">
+    <block wx:if="{{dialog}}">
+      <view class="dialog">
+          <view>该报告尚无对应的英文版，您可登录 <font class="a">学信档案</font>进行申请</view>
+          <view style="text-align: right; margin-top: 10px">
+              <view bindtap="hideDialog">关闭</view>
+          </view>
+      </view>
+    </block>
+    <view class="h5">
+        <view class="header">
+            <view class="lan" bindtap="showDialog">
+                <view class="selected">中文</view>
+                <view>英文</view>
+            </view>
+            <view class="flex_1"></view>
+            <image style="height: 20px; width: 16.59px" src="../../resources/pdf.png" alt=""></image>
+        </view>
+        <view class="h1">教育部学历证书电子注册备案表</view>
+        <view class="title">
+            <image src="../../resources/thumb.png" alt="" style="width: 62px; height: 80px" class="image"></image>
+            <view class="names">
+                <view><font class="name">黎惠惠</font><font class="sex">女</font></view>
+                <view class="birth">1987年05月15日</view>
+            </view>
+        </view>
+        <view class="dl">
+            <view class="dd">
+                <view class="label">入学日期</view>
+                <view class="span" >2004年07月01日</view>
+            </view>
+            <view class="dd">
+                <view class="label">毕(结)业日期</view>
+                <view class="span" >2007年07月01日</view>
+            </view>
+            <view class="dd">
+                <view class="label">学校名称</view>
+                <view class="span" >牡丹江医学院</view>
+            </view>
+            <view class="dd">
+                <view class="label">专业</view>
+                <view class="span" >护理学</view>
+            </view>
+            <view class="dd">
+                <view class="label">学历类别</view>
+                <view class="span" >普通高等教育</view>
+            </view>
+            <view class="dd">
+                <view class="label">学制</view>
+                <view class="span" >三年</view>
+            </view>
+            <view class="dd">
+                <view class="label">学习形式</view>
+                <view class="span" >普通全日制</view>
+            </view>
+            <view class="dd">
+                <view class="label">层次</view>
+                <view class="span" >专科</view>
+            </view>
+            <view class="dd">
+                <view class="label">证书编号</view>
+                <view class="span" >1022 9520 0706 0005 94</view>
+            </view>
+            <view class="dd">
+                <view class="label">毕(结)业</view>
+                <view class="span" >专科</view>
+            </view>
+            <view class="dd" style="border-bottom-width: 10px;">
+                <view class="label">在线验证码</view>
+                <view class="span" >AGWXNW3V2U86FNV9</view>
+            </view>
+            <view class="dd">
+                <view class="label">更新日期</view>
+                <view class="span" >2020年4月25日</view>
+            </view>
+        </view>
+    </view>
+</view>

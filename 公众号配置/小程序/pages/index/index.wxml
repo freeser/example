@@ -1,0 +1,13 @@
+<!--index.wxml-->
+<view class="index">
+  <view class="header">
+    <image class="logo" src="../../resources/logo.png"></image>
+    <view class="title">学信网报告在线验证</view>
+  </view>
+  <view class="remark-outer">
+    <text class="remark">扫描验证高等教育学籍学历在线验证报告，学历认证报告以及相关教育背景报告真伪，请勿使用其他第三方程序扫描，以免上当受骗。</text>
+  </view>
+  <view class="scanview">
+      <button class="scan-btn" bindtap="bindScan">扫码验证 </button>
+  </view>
+</view>

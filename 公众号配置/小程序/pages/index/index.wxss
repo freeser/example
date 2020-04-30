@@ -1,0 +1,42 @@
+/**index.wxss**/
+.index{
+  padding-top: 30px;
+}
+.logo {
+    width: 100px;
+    height: 95.66px;
+}
+.header{
+  text-align: center;
+}
+
+.title{
+  font-size: 18px;
+  color: #111;
+  font-weight: 600;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+.remark-outer{
+  padding: 0 30px;
+  line-height: 1.8;
+  font-size: 14px;
+  color: #AFAFAF;
+}
+
+.scanview{
+  padding-top: 80px;
+  margin: 0 30px;
+}
+.scan-btn{
+  background: #2EAEBC;
+  border: 0;
+  width: 100%!important;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+}

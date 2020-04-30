@@ -1,0 +1,95 @@
+.body{
+  background: #EFECF0;
+}
+.h5{
+  background: #fff;
+  padding: 1px;
+}
+.h1{
+  text-align: center;
+  padding: 20rpx 40rpx;
+  font-size: 36rpx;
+  color: #111;
+}
+.title{
+  display: flex;
+  align-items: center;
+  border-bottom: 20rpx solid #EFECF0;
+  padding: 20rpx 40rpx;
+  font-size: 36rpx;
+}
+.title .image{
+  margin-right: 40rpx;
+}
+.title .names .sex{
+  font-size: 30rpx;
+  margin-left: 20rpx;
+}
+.title .names .birth{
+  margin-top: 16rpx;
+  font-size: 30rpx;
+}
+.dd{
+  border-bottom: 1px solid #EFECF0;
+  display: flex;
+  align-items: center;
+  padding: 30rpx 40rpx;
+  font-size: 30rpx;
+}
+.dd .label{
+  color: #A5A5A5;
+  width: 250rpx;
+}
+.dd .span{
+  color: #434144;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+.header{
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 20rpx 40rpx;
+}
+.header .flex_1{
+  flex: 1;
+}
+.header .lan{
+  background: #E7E7E7;
+  color: #858585;
+  font-size: 30rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  border-radius: 30rpx;
+  padding-right: 10rpx;
+}
+.header .lan view {
+  display: inline-block;
+  padding: 0 10rpx;
+}
+.header .lan .selected{
+  background: #4A9DA0;
+  color: #fff;
+  padding: 0 20rpx;
+  border-radius: 30rpx;
+}
+.dialog{
+  position: absolute;
+  top: 128rpx;
+  right: 40rpx;
+  left: 40rpx;
+  width: auto;
+  border: 0;
+  box-shadow: 0 0 16rpx 0 #999;
+  padding: 40rpx;
+  font-size: 30rpx;
+  color: #444;
+  line-height: 1.6;
+  z-index: 10;
+  background-color: #fff;
+}
+.dialog .a{
+  color: #316B9C;
+  text-decoration: none;
+  outline: none;
+}
