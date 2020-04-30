@@ -16,14 +16,13 @@ Page({
 
   },
   bindScan: function() {
-    // wx.scanCode({
-    //   onlyFromCamera: true,
-    //   success (res) {
-    //     console.log(res)
-    //   }
-    // })
-    wx.navigateTo({
-      url: '../detail/detail'
+    wx.scanCode({
+      onlyFromCamera: true,
+      success (res) {
+        wx.navigateTo({
+          url: '../detail/detail'
+        })
+      }
     })
   }
 })
